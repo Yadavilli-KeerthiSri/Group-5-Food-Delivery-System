@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Agents | Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-slate-900">Delivery Agents</h2>
+                <p class="text-slate-500 text-sm">Manage your fleet and track availability</p>
+            </div>
+            
+            <a th:href="@{/admin/agents/add}" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-200 transition-all transform active:scale-95">
+                <span>➕</span> Add New Agent
+            </a>
+        </div>
+
+        <!-- Table Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200">
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Agent Name</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Contact</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Vehicle</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <tr th:each="a : ${agents}" class="hover:bg-blue-50/30 transition-colors">
+                        <td class="px-6 py-4 font-semibold text-slate-800" th:text="${a.agentName}"></td>
+                        <td class="px-6 py-4 text-slate-600" th:text="${a.contact}"></td>
+                        <td class="px-6 py-4">
+                            <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-md text-sm border border-slate-200" th:text="${a.vehicleDetails}"></span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <!-- Conditional Status Badges -->
+                            <span th:if="${a.availability}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5"></span> Available
+                            </span>
+                            <span th:unless="${a.availability}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span> Busy
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex justify-center gap-3">
+                                <a th:href="@{/admin/agents/edit/{id}(id=${a.agentId})}" 
+                                   class="text-blue-600 hover:text-blue-800 font-medium text-sm px-3 py-1 rounded-md hover:bg-blue-100 transition-all">
+                                    Edit
+                                </a>
+                                <a th:href="@{/admin/agents/delete/{id}(id=${a.agentId})}" 
+                                   onclick="return confirm('Are you sure?')"
+                                   class="text-red-500 hover:text-red-700 font-medium text-sm px-3 py-1 rounded-md hover:bg-red-50 transition-all">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Empty State (Optional) -->
+            <div th:if="${#lists.isEmpty(agents)}" class="p-12 text-center">
+                <p class="text-slate-400">No agents found. Start by adding one!</p>
+            </div>
+        </div>
+
+        <!-- Dashboard Link -->
+        <div class="mt-8 text-center">
+            <a th:href="@{/admin/dashboard}" class="text-slate-400 hover:text-slate-600 text-sm font-medium">
+                Return to Admin Dashboard
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Restaurants | FoodExec</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-6 md:p-12">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="mb-12 flex flex-col md:flex-row justify-between items-end gap-4">
+            <div>
+                <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">All Restaurants</h1>
+                <p class="text-slate-500 mt-2 font-medium">Discover the best food & drinks in your area</p>
+            </div>
+            <div class="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+                <span class="pl-3 text-slate-400 text-sm font-bold uppercase tracking-widest">Filter:</span>
+                <button class="px-4 py-2 bg-amber-500 text-white rounded-xl text-sm font-bold shadow-md shadow-amber-100 transition-transform active:scale-95">All</button>
+                <button class="px-4 py-2 text-slate-500 hover:bg-slate-50 rounded-xl text-sm font-bold transition-all">Top Rated</button>
+            </div>
+        </header>
+
+        <!-- Restaurants Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div th:each="r : ${restaurants}" class="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-amber-200/40 transition-all duration-300 flex flex-col">
+                
+                <!-- Card Image Placeholder -->
+                <div class="h-48 bg-amber-50 relative overflow-hidden">
+                    <div class="absolute inset-0 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
+                        🏪
+                    </div>
+                    <!-- Rating Badge -->
+                    <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                        <span class="text-amber-500 font-bold text-sm" th:text="${r.ratings}">4.5</span>
+                        <span class="text-amber-400 text-xs">★</span>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="p-6 flex-1 flex flex-col">
+                    <div class="mb-4">
+                        <h3 class="text-xl font-extrabold text-slate-800 mb-1 group-hover:text-amber-600 transition-colors" th:text="${r.restaurantName}">Restaurant Name</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md uppercase tracking-tighter" th:text="${r.cuisine}">Cuisine</span>
+                            <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                            <span class="text-xs text-slate-400 font-medium">Free Delivery</span>
+                        </div>
+                    </div>
+
+                    <!-- Action -->
+                    <div class="mt-auto pt-4 border-t border-slate-50">
+                        <a th:href="@{/user/restaurants/{id}(id=${r.restaurantId})}" class="flex items-center justify-between group/link">
+                            <span class="text-sm font-bold text-slate-700 group-hover/link:text-amber-600 transition-colors">View Menu</span>
+                            <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover/link:bg-amber-500 group-hover/link:text-white transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(restaurants)}" class="py-20 text-center">
+            <span class="text-6xl grayscale opacity-50">🍽️</span>
+            <h3 class="text-2xl font-bold text-slate-400 mt-4">No restaurants found</h3>
+            <p class="text-slate-400">Try adjusting your filters or checking back later.</p>
+        </div>
+    </div>
+
+</body>
+</html>

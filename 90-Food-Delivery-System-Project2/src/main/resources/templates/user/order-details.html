@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary | FoodExec</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 md:p-12">
+
+    <div class="max-w-2xl mx-auto">
+        <!-- Navigation Header -->
+        <div class="flex justify-between items-center mb-8">
+            <a th:href="@{/user/orders}" class="flex items-center gap-2 text-slate-500 hover:text-violet-600 font-semibold transition-colors group">
+                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                Back to Orders
+            </a>
+            <span class="bg-violet-100 text-violet-700 px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase" th:text="${'Order #' + order.orderId}">ID</span>
+        </div>
+
+        <!-- Main Status Card -->
+        <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden mb-8">
+            <div class="p-8 md:p-10 text-center">
+                <div class="w-20 h-20 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                    📦
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">Tracking Your Order</h2>
+                <p class="text-slate-500 text-sm mt-1">Current Status: <span class="text-violet-600 font-bold" th:text="${order.orderStatus}">Status</span></p>
+                
+                <!-- Status Stepper (Visual Only) -->
+                <div class="flex items-center justify-center mt-8 gap-2">
+                    <div class="h-2 w-12 rounded-full bg-violet-600"></div>
+                    <div class="h-2 w-12 rounded-full" th:classappend="${order.orderStatus != 'Placed' ? 'bg-violet-600' : 'bg-slate-200'}"></div>
+                    <div class="h-2 w-12 rounded-full" th:classappend="${order.orderStatus == 'Delivered' ? 'bg-violet-600' : 'bg-slate-200'}"></div>
+                </div>
+            </div>
+
+            <!-- Items Breakdown -->
+            <div class="bg-slate-50/50 p-8 md:p-10 border-t border-slate-100">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Items Ordered</h3>
+                <div class="space-y-4">
+                    <div th:each="i : ${order.items}" class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+                            <span class="font-medium text-slate-700" th:text="${i.itemName}">Item Name</span>
+                        </div>
+                        <span class="font-bold text-slate-900" th:text="${'₹' + i.price}">₹0</span>
+                    </div>
+                </div>
+
+                <!-- Total Row -->
+                <div class="mt-8 pt-6 border-t border-slate-200 flex justify-between items-end">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase">Grand Total</p>
+                        <p class="text-sm text-slate-400">Inclusive of all taxes</p>
+                    </div>
+                    <p class="text-4xl font-black text-slate-900">₹<span th:text="${order.totalAmount}">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Support -->
+        <div class="flex gap-4">
+            <button class="flex-1 bg-white border border-slate-200 text-slate-600 font-bold py-4 rounded-2xl hover:bg-slate-50 transition-colors shadow-sm text-sm">
+                Need Help?
+            </button>
+            <button class="flex-1 bg-violet-600 text-white font-bold py-4 rounded-2xl hover:bg-violet-700 shadow-lg shadow-violet-200 transition-all active:scale-95 text-sm">
+                Reorder Items
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>

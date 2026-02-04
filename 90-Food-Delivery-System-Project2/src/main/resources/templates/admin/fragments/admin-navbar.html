@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- ADMIN NAVBAR FRAGMENT -->
+<nav th:fragment="adminNavbar">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:14px 25px;
+        background:#263238;
+        color:white;
+    ">
+
+        <!-- LEFT -->
+        <div>
+            <a th:href="@{/admin/dashboard}"
+               style="color:white;
+                      font-weight:bold;
+                      text-decoration:none;
+                      font-size:20px;">
+                🛠 Admin Panel
+            </a>
+        </div>
+
+        <!-- RIGHT -->
+        <div>
+            <a th:href="@{/admin/dashboard}" style="color:white;margin-right:18px;">
+                Dashboard
+            </a>
+
+            <a th:href="@{/admin/restaurants}" style="color:white;margin-right:18px;">
+                Restaurants
+            </a>
+
+            <a th:href="@{/admin/menu-items}" style="color:white;margin-right:18px;">
+                Menu Items
+            </a>
+
+            <a th:href="@{/admin/agents}" style="color:white;margin-right:18px;">
+                Delivery Agents
+            </a>
+
+            <a th:href="@{/admin/orders}" style="color:white;margin-right:18px;">
+                Orders
+            </a>
+
+            <a th:href="@{/logout}" style="color:#ffab00;">
+                Logout
+            </a>
+        </div>
+
+    </div>
+
+</nav>
+
+</body>
+</html>
