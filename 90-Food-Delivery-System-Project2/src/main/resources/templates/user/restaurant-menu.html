@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu | FoodExec</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-orange-50/30 min-h-screen pb-20">
+
+    <!-- Floating Cart Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <a th:href="@{/user/cart/view}" class="flex items-center gap-3 bg-orange-500 hover:bg-orange-600 text-white px-6 py-4 rounded-2xl shadow-2xl shadow-orange-200 transition-all transform hover:-translate-y-1 active:scale-95">
+            <span class="text-xl">🛒</span>
+            <span class="font-bold">View Cart</span>
+        </a>
+    </div>
+
+    <!-- Header Section -->
+    <header class="bg-white border-b border-orange-100 px-6 py-10 rounded-b-[3rem] shadow-sm mb-8">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-center md:text-left">
+                <p class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-2">Ordering From</p>
+                <h2 class="text-4xl font-black text-slate-800 tracking-tight" th:text="${restaurant.restaurantName}">Restaurant Name</h2>
+            </div>
+            <div class="flex gap-4">
+                <div class="bg-orange-50 px-4 py-2 rounded-xl border border-orange-100">
+                    <p class="text-[10px] font-bold text-orange-400 uppercase">Avg. Prep</p>
+                    <p class="text-sm font-bold text-orange-700">25-30 Mins</p>
+                </div>
+                <div class="bg-green-50 px-4 py-2 rounded-xl border border-green-100">
+                    <p class="text-[10px] font-bold text-green-400 uppercase">Safety</p>
+                    <p class="text-sm font-bold text-green-700">Verified</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-xl font-bold text-slate-800">Available Menu Items</h3>
+            <span class="text-slate-400 text-sm" th:text="${#lists.size(menuItems) + ' Items'}">0 Items</span>
+        </div>
+
+        <!-- Menu Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div th:each="i : ${menuItems}" class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-100/50 transition-all group">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <!-- Category Badge -->
+                        <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-3" th:text="${i.category}">Category</span>
+                        
+                        <h4 class="text-lg font-bold text-slate-800 group-hover:text-orange-600 transition-colors" th:text="${i.itemName}">Item Name</h4>
+                        <p class="text-2xl font-black text-slate-900 mt-2">₹<span th:text="${i.price}">0</span></p>
+                    </div>
+
+                    <div class="ml-4 flex flex-col items-center">
+                        <!-- Visual Placeholder for Food Image -->
+                        <div class="w-24 h-24 bg-orange-50 rounded-2xl flex items-center justify-center text-3xl mb-4">
+                            🍜
+                        </div>
+                        
+                        <!-- Add Button -->
+                        <a th:href="@{/user/cart/add/{id}(id=${i.itemId})}" 
+                           class="w-full bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-2 px-6 rounded-xl transition-all text-center text-sm shadow-sm active:scale-90">
+                            ADD
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(menuItems)}" class="py-20 text-center bg-white rounded-[3rem] border border-dashed border-slate-200">
+            <span class="text-5xl">👨‍🍳</span>
+            <h3 class="mt-4 text-xl font-bold text-slate-800">Menu is being updated</h3>
+            <p class="text-slate-500">Check back in a few minutes for new dishes!</p>
+        </div>
+    </main>
+
+</body>
+</html>

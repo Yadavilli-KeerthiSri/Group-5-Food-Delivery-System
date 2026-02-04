@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Food Search</title>
+<style>
+
+body {
+
+	font-family: Arial, sans-serif;
+
+	background: #f5f5f5;
+
+	padding: 20px;
+
+}
+ 
+.search-box {
+
+	width: 100%;
+
+	max-width: 600px;
+
+	margin: 0 auto 30px;
+
+	display: flex;
+
+}
+ 
+.search-box input {
+
+	flex: 1;
+
+	padding: 12px;
+
+	font-size: 16px;
+
+}
+ 
+.search-box button, .view-btn {
+
+            padding: 12px 20px;
+
+            font-size: 14px;
+
+            background: #ff5722;
+
+            color: white;
+
+            border: none;
+
+            cursor: pointer;
+
+            border-radius: 4px;
+
+            text-decoration: none;
+
+            display: inline-block;
+
+        }
+ 
+.section-title {
+
+	margin-top: 30px;
+
+	font-size: 20px;
+
+	color: #333;
+
+}
+ 
+.card {
+
+	background: white;
+
+	padding: 15px;
+
+	margin: 10px 0;
+
+	border-radius: 6px;
+
+	box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+
+}
+ 
+.empty {
+
+	color: #777;
+
+	margin-top: 20px;
+
+}
+ 
+.view-btn:hover {
+
+            background: #e64a19;
+
+        }
+</style>
+</head>
+<body>
+ 
+	<!-- ================= SEARCH FORM ================= -->
+<form class="search-box" th:action="@{/user/search}" method="get">
+<input type="text" name="keyword" th:value="${keyword}"
+
+			placeholder="Search restaurants or dishes" required>
+<button type="submit">Search</button>
+</form>
+ 
+	<!-- ================= RESTAURANT RESULTS ================= -->
+<div th:if="${!#lists.isEmpty(restaurants)}">
+<div class="section-title">Restaurants</div>
+ 
+		<div class="card" th:each="r : ${restaurants}">
+<h3 th:text="${r.restaurantName}"></h3>
+<p>
+
+				📍 <span th:text="${r.location}"></span><br> 🍽 <span
+
+					th:text="${r.cuisine}"></span><br> ⭐ <span
+
+					th:text="${r.ratings}"></span>
+</p>
+ 
+			<!-- Open restaurant menu -->
+<form th:action="@{/user/restaurants/{id}(id=${r.restaurantId})}"
+
+				method="get">
+<button type="submit">View Menu</button>
+</form>
+</div>
+</div>
+ 
+	<!-- ================= MENU ITEM RESULTS ================= -->
+<div th:if="${!#lists.isEmpty(menuItems)}">
+<div class="section-title">Menu Items</div>
+<div class="card" th:each="item : ${menuItems}">
+<h3 th:text="${item.itemName}"></h3>
+<p>
+ 
+				💰 ₹<span th:text="${item.price}"></span><br> 🏪 <span
+
+					th:text="${item.restaurant.restaurantName}"></span>
+</p>
+<!-- REDIRECT TO RESTAURANT INSTEAD OF ADD TO CART -->
+<a
+
+				th:href="@{/user/restaurants/{id}(id=${item.restaurant.restaurantId})}"
+
+				class="view-btn"> View in Restaurant Menu </a>
+</div>
+</div>
+ 
+ 
+	<!-- ================= NO RESULTS ================= -->
+<div class="empty"
+
+		th:if="${#lists.isEmpty(restaurants) and #lists.isEmpty(menuItems)}">
+
+		No restaurants or menu items found.</div>
+ 
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failed | FoodExec</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">
+
+    <div class="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 p-10 text-center border border-slate-100">
+        
+        <!-- Animated-style Error Icon -->
+        <div class="w-24 h-24 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-8 relative">
+            <div class="absolute inset-0 rounded-full bg-rose-100 animate-ping opacity-20"></div>
+            <svg class="w-12 h-12 relative" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-800 mb-3">Oops! Payment Failed</h2>
+        
+        <p class="text-slate-500 mb-8 leading-relaxed">
+            We couldn't process your transaction. This might be due to a connection timeout or insufficient funds.
+        </p>
+
+        <!-- Action Area -->
+        <div class="space-y-4">
+            <a th:href="@{/user/cart/view}" class="block w-full bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 transform active:scale-95">
+                Retry Payment
+            </a>
+            
+            <div class="pt-2">
+                <a th:href="@{/user/dashboard}" class="text-sm font-semibold text-slate-400 hover:text-rose-500 transition-colors">
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Help Footer -->
+        <div class="mt-10 pt-8 border-t border-slate-50">
+            <div class="flex items-center justify-center gap-2 text-xs text-slate-400 font-medium italic">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Money wasn't deducted? Don't worry, it usually reverts in 24 hours.
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
