@@ -21,6 +21,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     
     List<Order> findAllByCustomer_EmailOrderByOrderDateDesc(String email);
     
+    List<Order> findByOrderStatusNotIn(List<OrderStatus> statuses);
+    
     @Modifying
     @Transactional
     @Query("UPDATE Order o SET o.orderStatus = :status WHERE o.orderId = :id")

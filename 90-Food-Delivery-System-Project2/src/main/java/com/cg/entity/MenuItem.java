@@ -22,7 +22,7 @@ public class MenuItem {
 
     private Double price;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 

@@ -43,11 +43,29 @@ public class AdminMenuItemController {
 
     /* SAVE */
     @PostMapping("/save")
-    public String save(@ModelAttribute MenuItem item,
-                       @RequestParam Long restaurantId) {
+    public String save(@ModelAttribute("item") MenuItem item,
+                       @RequestParam("restaurantId") Long restaurantId) {
 
-        item.setRestaurant(restaurantService.getById(restaurantId));
-        menuItemService.add(item);
+        // 1. Fetch the restaurant
+        var restaurant = restaurantService.getById(restaurantId);
+
+        if (item.getItemId() != null) {
+            // 2. If editing, fetch the MANAGED entity from DB
+            MenuItem existingItem = menuItemService.getById(item.getItemId());
+            
+            // 3. Update the managed entity with form data
+            existingItem.setItemName(item.getItemName());
+            existingItem.setCategory(item.getCategory());
+            existingItem.setPrice(item.getPrice());
+            existingItem.setRestaurant(restaurant);
+            
+            // 4. Save the managed entity
+            menuItemService.add(existingItem);
+        } else {
+            // 5. If it's a brand new item
+            item.setRestaurant(restaurant);
+            menuItemService.add(item);
+        }
 
         return "redirect:/admin/menu-items";
     }
