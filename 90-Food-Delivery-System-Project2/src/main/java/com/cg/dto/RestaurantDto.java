@@ -8,6 +8,7 @@ public class RestaurantDto {
     private String location;
     private String cuisine;
     private Double ratings;
+    private String imageNames;
 
     // Menu item IDs for this restaurant
     private List<Long> menuItemIds;
@@ -40,4 +41,11 @@ public class RestaurantDto {
 
     public List<Long> getMenuItemIds() { return menuItemIds; }
     public void setMenuItemIds(List<Long> menuItemIds) { this.menuItemIds = menuItemIds; }
+
+	public String getImageNames() {
+		return imageNames;
+	}
+	public void setImageNames(String imageNames) {
+		this.imageNames = imageNames;
+	}
 }

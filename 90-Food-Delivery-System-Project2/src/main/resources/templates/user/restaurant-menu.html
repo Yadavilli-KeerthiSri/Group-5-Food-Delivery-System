@@ -45,32 +45,47 @@
             <h3 class="text-xl font-bold text-slate-800">Available Menu Items</h3>
             <span class="text-slate-400 text-sm" th:text="${#lists.size(menuItems) + ' Items'}">0 Items</span>
         </div>
-
-        <!-- Menu Grid -->
+        
+        <!-- MENU GRID -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div th:each="i : ${menuItems}" class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-100/50 transition-all group">
-                <div class="flex justify-between items-start">
-                    <div class="flex-1">
-                        <!-- Category Badge -->
-                        <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-3" th:text="${i.category}">Category</span>
-                        
-                        <h4 class="text-lg font-bold text-slate-800 group-hover:text-orange-600 transition-colors" th:text="${i.itemName}">Item Name</h4>
-                        <p class="text-2xl font-black text-slate-900 mt-2">₹<span th:text="${i.price}">0</span></p>
-                    </div>
+<div th:each="i : ${menuItems}" class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-100/50 transition-all group">
+<div class="flex justify-between items-start">
+<div class="flex-1">
+<span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-3"
 
-                    <div class="ml-4 flex flex-col items-center">
-                        <!-- Visual Placeholder for Food Image -->
-                        <div class="w-24 h-24 bg-orange-50 rounded-2xl flex items-center justify-center text-3xl mb-4">
-                            🍜
-                        </div>
-                        
-                        <!-- Add Button -->
-                        <a th:href="@{/user/cart/add/{id}(id=${i.itemId})}" 
+              th:text="${i.category}">Category</span>
+ 
+        <h4 class="text-lg font-bold text-slate-800 group-hover:text-orange-600 transition-colors"
+
+            th:text="${i.itemName}">Item Name</h4>
+<p class="text-2xl font-black text-slate-900 mt-2">₹<span th:text="${i.price}">0</span></p>
+</div>
+ 
+      <div class="ml-4 flex flex-col items-center">
+<div class="w-24 h-24 bg-orange-50 rounded-2xl flex items-center justify-center text-3xl mb-4 overflow-hidden"
+
+             th:with="hasImg=${i.imageNames != null and !#strings.isEmpty(i.imageNames)}">
+<img th:if="${hasImg}"
+
+               th:src="${i.imageNames}"  
+
+               alt="Food image"
+
+               class="w-24 h-24 object-cover rounded-2xl" />
+<span th:unless="${hasImg}">🍜2</span>
+</div>
+</div>
+</div>
+
+<!-- Add Button -->
+<a th:href="@{/user/cart/add/{id}(id=${i.itemId})}" 
+
                            class="w-full bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-2 px-6 rounded-xl transition-all text-center text-sm shadow-sm active:scale-90">
+
                             ADD
-                        </a>
-                    </div>
-                </div>
+</a>
+</div>
+</div>
             </div>
         </div>
 
