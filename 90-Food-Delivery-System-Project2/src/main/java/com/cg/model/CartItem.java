@@ -1,34 +1,35 @@
 package com.cg.model;
 
-import com.cg.entity.MenuItem;
+import com.cg.dto.MenuItemDto;
 
 public class CartItem {
 
-    private MenuItem item;
+    private MenuItemDto item;
     private int quantity;
 
-    public CartItem(MenuItem item) {
+    public CartItem(MenuItemDto item) {
         this.item = item;
         this.quantity = 1;
     }
 
-    // getters & setters
+    // Subtotal calculation using DTO field
     public double getSubtotal() {
         return item.getPrice() * quantity;
     }
-    
-	public MenuItem getItem() {
-		return item;
-	}
-	public void setItem(MenuItem item) {
-		this.item = item;
-	}
 
-	public int getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}   
+    public MenuItemDto getItem() {
+        return item;
+    }
+
+    public void setItem(MenuItemDto item) {
+        this.item = item;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }
-

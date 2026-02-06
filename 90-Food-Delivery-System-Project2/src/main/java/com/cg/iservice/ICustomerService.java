@@ -1,18 +1,18 @@
 package com.cg.iservice;
 
-import com.cg.entity.Customer;
-
 import java.util.List;
 
+import com.cg.dto.CustomerDto;
+
 public interface ICustomerService {
-	Customer register(Customer customer);
 
-    Customer getById(Long id);
+    CustomerDto register(CustomerDto dto);
 
-    Customer getByEmail(String email);
+    CustomerDto getById(Long id);
 
-    List<Customer> getAll();
+    CustomerDto getByEmail(String email);
+
+    List<CustomerDto> getAll();
 
     void delete(Long id);
 }
-

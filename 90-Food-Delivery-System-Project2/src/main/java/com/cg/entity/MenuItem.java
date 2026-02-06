@@ -1,12 +1,16 @@
 package com.cg.entity;
 
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,10 +25,16 @@ public class MenuItem {
     private String category;
 
     private Double price;
+    
+    @Column(name = "imageNames")
+    private String imageNames;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
+
+    @OneToMany(mappedBy = "items", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
 
 	 // getters and setters
 	public Long getItemId() {
@@ -60,5 +70,19 @@ public class MenuItem {
 	}
 	public void setRestaurant(Restaurant restaurant) {
 		this.restaurant = restaurant;
+	}
+	
+	public String getImageNames() {
+		return imageNames;
+	}
+	public void setImageNames(String imageNames) {
+		this.imageNames = imageNames;
+	}
+	
+	public List<Order> getOrders() {
+		return orders;
+	}
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
 	}
 }

@@ -2,16 +2,17 @@ package com.cg.iservice;
 
 import java.util.List;
 
-import com.cg.entity.DeliveryAgent;
+import com.cg.dto.DeliveryAgentDto;
 
 public interface IDeliveryAgentService {
-	DeliveryAgent add(DeliveryAgent agent);
 
-    DeliveryAgent update(DeliveryAgent agent);
+    DeliveryAgentDto add(DeliveryAgentDto dto);
 
-    List<DeliveryAgent> getAll();
+    DeliveryAgentDto update(DeliveryAgentDto dto);
+
+    DeliveryAgentDto getById(Long id);
+
+    List<DeliveryAgentDto> getAll();
 
     void delete(Long id);
-    
-    public DeliveryAgent getById(Long id);
 }

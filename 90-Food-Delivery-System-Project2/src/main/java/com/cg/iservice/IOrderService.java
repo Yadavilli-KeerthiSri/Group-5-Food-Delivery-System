@@ -2,20 +2,21 @@ package com.cg.iservice;
 
 import java.util.List;
 
-import com.cg.entity.Order;
+import com.cg.dto.OrderDto;
 
 public interface IOrderService {
-	Order place(Order order);
 
-    Order getById(Long id);
+    OrderDto place(OrderDto dto);
 
-    List<Order> getByCustomer(Long customerId);
-
-    List<Order> getAll();
-
-    Order updateStatus(Long orderId);
+    OrderDto updateStatus(Long orderId);
 
     void cancel(Long orderId);
-    
-    List<Order> getOrdersByCustomerEmail(String email);
+
+    OrderDto getById(Long id);
+
+    List<OrderDto> getByCustomer(Long customerId);
+
+    List<OrderDto> getAll();
+
+    List<OrderDto> getOrdersByCustomerEmail(String email);
 }

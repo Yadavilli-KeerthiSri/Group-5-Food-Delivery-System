@@ -2,18 +2,19 @@ package com.cg.iservice;
 
 import java.util.List;
 
-import com.cg.entity.MenuItem;
+import com.cg.dto.MenuItemDto;
 
 public interface IMenuItemService {
-	MenuItem add(MenuItem item);
 
-    MenuItem update(MenuItem item);
+    MenuItemDto add(MenuItemDto dto);
 
-    MenuItem getById(Long id);
+    MenuItemDto update(MenuItemDto dto);
 
-    List<MenuItem> getByRestaurant(Long restaurantId);
+    MenuItemDto getById(Long id);
+
+    List<MenuItemDto> getByRestaurant(Long restaurantId);
+
+    List<MenuItemDto> getAll();
 
     void delete(Long id);
-    
-    public List<MenuItem> getAll();
 }

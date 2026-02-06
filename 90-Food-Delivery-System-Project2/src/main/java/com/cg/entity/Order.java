@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.cg.enumeration.OrderStatus;
+import com.cg.enumeration.TransactionStatus;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -32,6 +33,8 @@ public class Order {
     private OrderStatus orderStatus;
 
     private double totalAmount;
+    
+    private TransactionStatus transactionStatus;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -40,7 +43,7 @@ public class Order {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH}) 
     @JoinTable(
         name = "order_items",
-        joinColumns = @JoinColumn(name = "order_id"),
+        joinColumns = @JoinColumn(name = "order_id", nullable = true),
         inverseJoinColumns = @JoinColumn(name = "item_id")
     )
     private List<MenuItem> items;
@@ -108,5 +111,12 @@ public class Order {
 	}
 	public void setPayment(Payment payment) {
 		this.payment = payment;
+	}
+	
+	public TransactionStatus getTransactionStatus() {
+		return transactionStatus;
+	}
+	public void setTransactionStatus(TransactionStatus transactionStatus) {
+		this.transactionStatus = transactionStatus;
 	}
 }

@@ -1,18 +1,19 @@
 package com.cg.controller.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.cg.entity.Order;
-import com.cg.entity.Payment;
+import com.cg.dto.CustomerDto;
+import com.cg.dto.OrderDto;
+import com.cg.dto.PaymentDto;
 import com.cg.enumeration.PaymentMethod;
 import com.cg.enumeration.TransactionStatus;
+import com.cg.service.CustomerService;
 import com.cg.service.OrderService;
 import com.cg.service.PaymentService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/user/payment")
@@ -23,32 +24,38 @@ public class UserPaymentController {
 
     @Autowired
     private OrderService orderService;
+    
+    @Autowired
+    private CustomerService customerService;
 
     @PostMapping("/pay")
     public String pay(@RequestParam PaymentMethod paymentMethod,
                       @RequestParam Long orderId) {
 
-        Order order = orderService.getById(orderId);
+        OrderDto order = orderService.getById(orderId);
 
-        Payment payment = new Payment();
-        payment.setOrder(order);
+        PaymentDto payment = new PaymentDto();
+        payment.setOrderId(order.getOrderId());
         payment.setPaymentMethod(paymentMethod);
         payment.setAmount(order.getTotalAmount());
         payment.setTransactionStatus(TransactionStatus.SUCCESS);
-
+        
         paymentService.makePayment(payment);
-
-        return "redirect:/user/payment/success";
+        
+		return "redirect:/user/payment/success";
     }
 
-    @GetMapping("/success")
-    public String success() {
-        return "user/payment-success";
+    /* VIEW */
+    @GetMapping
+    public String profile(Authentication auth, Model model) {
+        model.addAttribute("user", customerService.getByEmail(auth.getName()));
+        return "user/profile-edit";
     }
 
-    @GetMapping("/failure")
-    public String failure() {
-        return "user/payment-failure";
+    /* UPDATE */
+    @PostMapping("/update")
+    public String update(@ModelAttribute CustomerDto dto) {
+        customerService.register(dto); // register() acts as create/update
+        return "redirect:/user/profile";
     }
 }
-

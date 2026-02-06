@@ -4,149 +4,161 @@
 <meta charset="UTF-8">
 <title>Food Search</title>
 <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #fdfdfd; /* Off-white background */
-        padding: 30px;
-        color: #444;
-    }
 
-    /* SEARCH BOX: Centered with a soft blue tint */
-    .search-box {
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto 40px;
-        display: flex;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border-radius: 8px;
-        overflow: hidden;
-    }
+body {
 
-    .search-box input {
-        flex: 1;
-        padding: 15px;
-        font-size: 16px;
-        border: 1px solid #e0e0e0;
-        outline: none;
-    }
+	font-family: Arial, sans-serif;
 
-    .search-box button {
-        padding: 0 25px;
-        background: #6c5ce7; /* Modern Soft Purple */
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background 0.3s;
-    }
+	background: #f5f5f5;
 
-    .search-box button:hover {
-        background: #5849c4;
-    }
+	padding: 20px;
 
-    /* TITLES: Colorful and clear */
-    .section-title {
-        margin-top: 40px;
-        font-size: 22px;
-        font-weight: bold;
-        color: #2d3436;
-        border-left: 5px solid #00cec9; /* Mint accent */
-        padding-left: 15px;
-    }
+}
+ 
+.search-box {
 
-    /* CARDS: Clean white with soft shadows */
-    .card {
-        background: white;
-        padding: 20px;
-        margin: 15px 0;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-        border: 1px solid #f0f0f0;
-        transition: transform 0.2s;
-    }
+	width: 100%;
 
-    .card:hover {
-        transform: translateY(-3px);
-    }
+	max-width: 600px;
 
-    .card h3 {
-        margin-top: 0;
-        color: #6c5ce7;
-    }
+	margin: 0 auto 30px;
 
-    .card p {
-        line-height: 1.6;
-        color: #636e72;
-    }
+	display: flex;
 
-    /* BUTTONS: Rounded and colorful */
-    button, .view-btn {
-        padding: 10px 20px;
-        font-size: 14px;
-        background: #ff7675; /* Soft Coral/Pink */
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 25px;
-        text-decoration: none;
-        display: inline-block;
-        transition: all 0.3s;
-    }
+}
+ 
+.search-box input {
 
-    .view-btn:hover, button:hover {
-        background: #d63031;
-        box-shadow: 0 4px 10px rgba(255, 118, 117, 0.3);
-    }
+	flex: 1;
 
-    .empty {
-        text-align: center;
-        color: #b2bec3;
-        margin-top: 50px;
-        font-style: italic;
-    }
+	padding: 12px;
+
+	font-size: 16px;
+
+}
+ 
+.search-box button, .view-btn {
+
+            padding: 12px 20px;
+
+            font-size: 14px;
+
+            background: #ff5722;
+
+            color: white;
+
+            border: none;
+
+            cursor: pointer;
+
+            border-radius: 4px;
+
+            text-decoration: none;
+
+            display: inline-block;
+
+        }
+ 
+.section-title {
+
+	margin-top: 30px;
+
+	font-size: 20px;
+
+	color: #333;
+
+}
+ 
+.card {
+
+	background: white;
+
+	padding: 15px;
+
+	margin: 10px 0;
+
+	border-radius: 6px;
+
+	box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+
+}
+ 
+.empty {
+
+	color: #777;
+
+	margin-top: 20px;
+
+}
+ 
+.view-btn:hover {
+
+            background: #e64a19;
+
+        }
 </style>
 </head>
 <body>
+ 
+	<!-- ================= SEARCH FORM ================= -->
+<form class="search-box" th:action="@{/user/search}" method="get">
+<input type="text" name="keyword" th:value="${keyword}"
 
-    <!-- ================= SEARCH FORM ================= -->
-    <form class="search-box" th:action="@{/user/search}" method="get">
-        <input type="text" name="keyword" th:value="${keyword}" placeholder="Search restaurants or dishes" required>
-        <button type="submit">Search</button>
-    </form>
+			placeholder="Search restaurants or dishes" required>
+<button type="submit">Search</button>
+</form>
+ 
+	<!-- ================= RESTAURANT RESULTS ================= -->
+<div th:if="${!#lists.isEmpty(restaurants)}">
+<div class="section-title">Restaurants</div>
+ 
+		<div class="card" th:each="r : ${restaurants}">
+<h3 th:text="${r.restaurantName}"></h3>
+<p>
 
-    <!-- ================= RESTAURANT RESULTS ================= -->
-    <div th:if="${!#lists.isEmpty(restaurants)}">
-        <div class="section-title">Restaurants</div>
-        <div class="card" th:each="r : ${restaurants}">
-            <h3 th:text="${r.restaurantName}"></h3>
-            <p>
-                📍 <span th:text="${r.location}"></span><br> 
-                🍽️ <span th:text="${r.cuisine}"></span><br> 
-                ⭐ <span style="color: #fdcb6e; font-weight: bold;" th:text="${r.ratings}"></span>
-            </p>
-            <form th:action="@{/user/restaurants/{id}(id=${r.restaurantId})}" method="get">
-                <button type="submit">View Menu</button>
-            </form>
-        </div>
-    </div>
+				📍 <span th:text="${r.location}"></span><br> 🍽 <span
 
-    <!-- ================= MENU ITEM RESULTS ================= -->
-    <div th:if="${!#lists.isEmpty(menuItems)}">
-        <div class="section-title">Menu Items</div>
-        <div class="card" th:each="item : ${menuItems}">
-            <h3 th:text="${item.itemName}"></h3>
-            <p>
-                💰 <span style="color: #2ecc71; font-weight: bold;">₹<span th:text="${item.price}"></span></span><br> 
-                🏪 <span th:text="${item.restaurant.restaurantName}"></span>
-            </p>
-            <a th:href="@{/user/restaurants/{id}(id=${item.restaurant.restaurantId})}" class="view-btn">View in Restaurant Menu</a>
-        </div>
-    </div>
+					th:text="${r.cuisine}"></span><br> ⭐ <span
 
-    <!-- ================= NO RESULTS ================= -->
-    <div class="empty" th:if="${#lists.isEmpty(restaurants) and #lists.isEmpty(menuItems)}">
-        No restaurants or menu items found. Try a different search!
-    </div>
+					th:text="${r.ratings}"></span>
+</p>
+ 
+			<!-- Open restaurant menu -->
+<form th:action="@{/user/restaurants/{id}(id=${r.restaurantId})}"
 
+				method="get">
+<button type="submit">View Menu</button>
+</form>
+</div>
+</div>
+ 
+	<!-- ================= MENU ITEM RESULTS ================= -->
+<div th:if="${!#lists.isEmpty(menuItems)}">
+<div class="section-title">Menu Items</div>
+<div class="card" th:each="item : ${menuItems}">
+<h3 th:text="${item.itemName}"></h3>
+<p>
+ 
+				💰 ₹<span th:text="${item.price}"></span><br> 🏪 <span
+
+					th:text="${item.restaurant.restaurantName}"></span>
+</p>
+<!-- REDIRECT TO RESTAURANT INSTEAD OF ADD TO CART -->
+<a
+
+				th:href="@{/user/restaurants/{id}(id=${item.restaurant.restaurantId})}"
+
+				class="view-btn"> View in Restaurant Menu </a>
+</div>
+</div>
+ 
+ 
+	<!-- ================= NO RESULTS ================= -->
+<div class="empty"
+
+		th:if="${#lists.isEmpty(restaurants) and #lists.isEmpty(menuItems)}">
+
+		No restaurants or menu items found.</div>
+ 
 </body>
 </html>

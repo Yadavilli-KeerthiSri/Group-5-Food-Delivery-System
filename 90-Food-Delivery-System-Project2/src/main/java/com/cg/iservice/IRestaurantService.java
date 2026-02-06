@@ -2,16 +2,21 @@ package com.cg.iservice;
 
 import java.util.List;
 
-import com.cg.entity.Restaurant;
+import com.cg.dto.RestaurantDto;
 
 public interface IRestaurantService {
-	Restaurant add(Restaurant restaurant);
 
-    Restaurant update(Restaurant restaurant);
+    RestaurantDto add(RestaurantDto dto);
 
-    Restaurant getById(Long id);
+    RestaurantDto update(RestaurantDto dto);
 
-    List<Restaurant> getAll();
+    RestaurantDto getById(Long id);
+
+    List<RestaurantDto> getAll();
+
+    List<RestaurantDto> findTopRated();
 
     void delete(Long id);
+    
+    List<RestaurantDto> findTopForDashboard();
 }

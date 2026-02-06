@@ -1,8 +1,9 @@
 package com.cg.controller.admin;
 
-import com.cg.entity.MenuItem;
-import com.cg.service.MenuItemService;
-import com.cg.service.RestaurantService;
+import com.cg.dto.MenuItemDto;
+import com.cg.iservice.IMenuItemService;
+import com.cg.iservice.IRestaurantService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,69 +13,63 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/menu-items")
 public class AdminMenuItemController {
 
-    @Autowired
-    private MenuItemService menuItemService;
+    private final IMenuItemService menuItemService;
+    private final IRestaurantService restaurantService;
 
     @Autowired
-    private RestaurantService restaurantService;
+    public AdminMenuItemController(IMenuItemService menuItemService,
+                                   IRestaurantService restaurantService) {
+        this.menuItemService = menuItemService;
+        this.restaurantService = restaurantService;
+    }
 
-    /* LIST */
+    /* ---------------- LIST ALL ITEMS ---------------- */
     @GetMapping
     public String list(Model model) {
         model.addAttribute("items", menuItemService.getAll());
         return "admin/menu-items";
     }
 
-    /* ADD FORM */
+    /* ---------------- ADD FORM ---------------- */
     @GetMapping("/add")
     public String addForm(Model model) {
-        model.addAttribute("item", new MenuItem());
+        model.addAttribute("item", new MenuItemDto());
         model.addAttribute("restaurants", restaurantService.getAll());
         return "admin/menu-item-form";
     }
 
-    /* EDIT FORM */
+    /* ---------------- EDIT FORM ---------------- */
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, Model model) {
-        model.addAttribute("item", menuItemService.getById(id));
+        MenuItemDto item = menuItemService.getById(id);
+        model.addAttribute("item", item);
         model.addAttribute("restaurants", restaurantService.getAll());
         return "admin/menu-item-form";
     }
 
-    /* SAVE */
+    /* ---------------- SAVE ITEM (CREATE or UPDATE) ---------------- */
     @PostMapping("/save")
-    public String save(@ModelAttribute("item") MenuItem item,
+    public String save(@ModelAttribute("item") MenuItemDto dto,
                        @RequestParam("restaurantId") Long restaurantId) {
 
-        // 1. Fetch the restaurant
-        var restaurant = restaurantService.getById(restaurantId);
+        // Bind restaurant ID to DTO
+        dto.setRestaurantId(restaurantId);
 
-        if (item.getItemId() != null) {
-            // 2. If editing, fetch the MANAGED entity from DB
-            MenuItem existingItem = menuItemService.getById(item.getItemId());
-            
-            // 3. Update the managed entity with form data
-            existingItem.setItemName(item.getItemName());
-            existingItem.setCategory(item.getCategory());
-            existingItem.setPrice(item.getPrice());
-            existingItem.setRestaurant(restaurant);
-            
-            // 4. Save the managed entity
-            menuItemService.add(existingItem);
+        if (dto.getItemId() == null) {
+            // Create new menu item
+            menuItemService.add(dto);
         } else {
-            // 5. If it's a brand new item
-            item.setRestaurant(restaurant);
-            menuItemService.add(item);
+            // Update existing menu item
+            menuItemService.update(dto);
         }
 
         return "redirect:/admin/menu-items";
     }
 
-    /* DELETE */
+    /* ---------------- DELETE ITEM ---------------- */
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         menuItemService.delete(id);
         return "redirect:/admin/menu-items";
     }
 }
-

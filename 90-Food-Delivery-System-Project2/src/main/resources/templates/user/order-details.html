@@ -2,77 +2,68 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Summary | FoodExec</title>
+    <title>Order Details | FoodExec</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Outfit', sans-serif; background: linear-gradient(135deg, #fff5f7 0%, #f0f4ff 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen p-4 md:p-12">
-
-    <div class="max-w-2xl mx-auto">
-        <!-- Navigation Header -->
-        <div class="flex justify-between items-center mb-8">
-            <a th:href="@{/user/orders}" class="flex items-center gap-2 text-slate-500 hover:text-violet-600 font-semibold transition-colors group">
-                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                Back to Orders
-            </a>
-            <span class="bg-violet-100 text-violet-700 px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase" th:text="${'Order #' + order.orderId}">ID</span>
-        </div>
-
-        <!-- Main Status Card -->
-        <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden mb-8">
-            <div class="p-8 md:p-10 text-center">
-                <div class="w-20 h-20 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                    📦
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800">Tracking Your Order</h2>
-                <p class="text-slate-500 text-sm mt-1">Current Status: <span class="text-violet-600 font-bold" th:text="${order.orderStatus}">Status</span></p>
-                
-                <!-- Status Stepper (Visual Only) -->
-                <div class="flex items-center justify-center mt-8 gap-2">
-                    <div class="h-2 w-12 rounded-full bg-violet-600"></div>
-                    <div class="h-2 w-12 rounded-full" th:classappend="${order.orderStatus != 'Placed' ? 'bg-violet-600' : 'bg-slate-200'}"></div>
-                    <div class="h-2 w-12 rounded-full" th:classappend="${order.orderStatus == 'Delivered' ? 'bg-violet-600' : 'bg-slate-200'}"></div>
-                </div>
-            </div>
-
-            <!-- Items Breakdown -->
-            <div class="bg-slate-50/50 p-8 md:p-10 border-t border-slate-100">
-                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Items Ordered</h3>
-                <div class="space-y-4">
-                    <div th:each="i : ${order.items}" class="flex justify-between items-center">
-                        <div class="flex items-center gap-3">
-                            <span class="w-2 h-2 rounded-full bg-violet-400"></span>
-                            <span class="font-medium text-slate-700" th:text="${i.itemName}">Item Name</span>
+<body class="p-6">
+    <div class="max-w-3xl mx-auto">
+        <a th:href="@{/user/orders/my-orders}" class="text-rose-500 font-bold mb-8 inline-block hover:underline">← Back to Orders</a>
+        
+        <div th:if="${order != null}" class="glass-card rounded-[2.5rem] p-10 shadow-xl">
+            <h2 class="text-3xl font-black text-slate-900 mb-6" th:text="|Order #${order.orderId}|">#000</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div>
+                    <p class="text-xs font-black uppercase text-slate-400">Order Status</p>
+                    <p class="text-lg font-bold text-rose-500" th:text="${order.orderStatus ?: 'PLACED'}"></p>
+                    
+                    <div class="mt-6 grid grid-cols-2 gap-8">
+                        <div>
+                            <p class="text-xs font-black uppercase text-slate-400">Method</p>
+                            <p class="text-lg font-bold text-slate-700" th:text="${order.paymentMethod ?: 'N/A'}"></p>
                         </div>
-                        <span class="font-bold text-slate-900" th:text="${'₹' + i.price}">₹0</span>
+                        <div>
+                            <p class="text-xs font-black uppercase text-slate-400">Payment Status</p>
+                            
+                            <div th:with="isOnline=${order.paymentMethod?.toString() == 'UPI' || order.paymentMethod?.toString() == 'NET_BANKING'},
+                                          isSuccess=${order.transactionStatus?.toString() == 'SUCCESS'},
+                                          isDelivered=${order.orderStatus?.toString() == 'DELIVERED'}">
+                                
+                                <p th:if="${(isOnline && isSuccess) || (order.paymentMethod?.toString() == 'CASH_ON_DELIVERY' && isDelivered)}" 
+                                   class="text-lg font-bold text-green-600">SUCCESS</p>
+                                <p th:unless="${(isOnline && isSuccess) || (order.paymentMethod?.toString() == 'CASH_ON_DELIVERY' && isDelivered)}" 
+                                   class="text-lg font-bold text-amber-600">PENDING</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Total Row -->
-                <div class="mt-8 pt-6 border-t border-slate-200 flex justify-between items-end">
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase">Grand Total</p>
-                        <p class="text-sm text-slate-400">Inclusive of all taxes</p>
-                    </div>
-                    <p class="text-4xl font-black text-slate-900">₹<span th:text="${order.totalAmount}">0</span></p>
+                <div class="md:text-right">
+                    <p class="text-xs font-black uppercase text-slate-400">Placed On</p>
+                    <p class="font-bold text-slate-700" 
+                       th:text="${order.orderDate != null ? #temporals.format(order.orderDate, 'dd MMM yyyy, hh:mm a') : 'N/A'}"></p>
                 </div>
             </div>
-        </div>
 
-        <!-- Help Support -->
-        <div class="flex gap-4">
-            <button class="flex-1 bg-white border border-slate-200 text-slate-600 font-bold py-4 rounded-2xl hover:bg-slate-50 transition-colors shadow-sm text-sm">
-                Need Help?
-            </button>
-            <button class="flex-1 bg-violet-600 text-white font-bold py-4 rounded-2xl hover:bg-violet-700 shadow-lg shadow-violet-200 transition-all active:scale-95 text-sm">
-                Reorder Items
-            </button>
+            <div class="border-t border-slate-200 pt-8">
+                <h3 class="font-black text-slate-800 mb-4 uppercase text-sm">Items Summary</h3>
+                <ul class="space-y-3">
+                    <li th:each="itemId : ${order.itemIds}" class="flex justify-between items-center bg-white/60 p-4 rounded-xl border border-white">
+                        <span class="text-slate-600 font-medium" th:text="|Product ID: ${itemId}|"></span>
+                        <span class="text-slate-400 text-xs">Qty: 1</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="border-t border-slate-200 mt-8 pt-8 flex justify-between items-center">
+                <p class="text-2xl font-black text-slate-900">Total Amount</p>
+                <p class="text-3xl font-black text-rose-500">₹<span th:text="${order.totalAmount}">0</span></p>
+            </div>
         </div>
     </div>
-
 </body>
 </html>

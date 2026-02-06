@@ -2,12 +2,13 @@ package com.cg.iservice;
 
 import java.util.List;
 
-import com.cg.entity.Payment;
+import com.cg.dto.PaymentDto;
 
 public interface IPaymentService {
-	Payment makePayment(Payment payment);
 
-    Payment getById(Long id);
+    PaymentDto makePayment(PaymentDto dto);
 
-    List<Payment> getAll();
+    PaymentDto getById(Long id);
+
+    List<PaymentDto> getAll();
 }
