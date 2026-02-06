@@ -1,6 +1,7 @@
 package com.cg.enumeration;
 
 public enum OrderStatus {
+	PENDING,
 	PLACED,
     PREPARING,
     PICKED_UP,

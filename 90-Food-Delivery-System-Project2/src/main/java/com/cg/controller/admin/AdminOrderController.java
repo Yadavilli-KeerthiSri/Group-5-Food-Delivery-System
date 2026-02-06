@@ -30,18 +30,25 @@ public class AdminOrderController {
     }
 
     /* VIEW SPECIFIC ORDER + CUSTOMER DETAILS */
+//    @GetMapping("/view/{id}")
+//    public String viewDetails(@PathVariable Long id, Model model) {
+//        // 1. Fetch the DTO
+//        OrderDto orderDto = orderService.getById(id);
+//        
+//        // 2. Fetch Customer (Assume this is also a DTO or Entity)
+//        var customer = customerService.getById(orderDto.getCustomerId());
+//        
+//        // 3. Add to model - names must match HTML exactly
+//        model.addAttribute("order", orderDto);
+//        model.addAttribute("customer", customer);
+//        
+//        return "admin/order"; 
+//    }
+    
+    /* VIEW SPECIFIC ORDER + CUSTOMER DETAILS */
     @GetMapping("/view/{id}")
     public String viewDetails(@PathVariable Long id, Model model) {
-        // 1. Fetch the DTO
-        OrderDto orderDto = orderService.getById(id);
-        
-        // 2. Fetch Customer (Assume this is also a DTO or Entity)
-        var customer = customerService.getById(orderDto.getCustomerId());
-        
-        // 3. Add to model - names must match HTML exactly
-        model.addAttribute("order", orderDto);
-        model.addAttribute("customer", customer);
-        
+        // ... (existing logic) ...
         return "admin/order"; 
     }
 

@@ -3,8 +3,7 @@ package com.cg.controller.user;
 import com.cg.dto.CustomerDto;
 import com.cg.dto.OrderDto;
 import com.cg.dto.PaymentDto;
-import com.cg.enumeration.PaymentMethod;
-import com.cg.enumeration.TransactionStatus;
+import com.cg.enumeration.OrderStatus;
 import com.cg.service.CustomerService;
 import com.cg.service.OrderService;
 import com.cg.service.PaymentService;
@@ -28,22 +27,34 @@ public class UserPaymentController {
     @Autowired
     private CustomerService customerService;
 
-    @PostMapping("/pay")
-    public String pay(@RequestParam PaymentMethod paymentMethod,
-                      @RequestParam Long orderId) {
-
-        OrderDto order = orderService.getById(orderId);
-
-        PaymentDto payment = new PaymentDto();
-        payment.setOrderId(order.getOrderId());
-        payment.setPaymentMethod(paymentMethod);
-        payment.setAmount(order.getTotalAmount());
-        payment.setTransactionStatus(TransactionStatus.SUCCESS);
-        
-        paymentService.makePayment(payment);
-        
-		return "redirect:/user/payment/success";
-    }
+//    @PostMapping("/pay")
+//    public String pay(@RequestParam PaymentMethod paymentMethod, 
+//                      @RequestParam Long orderId, 
+//                      Principal principal) { // Add Principal to get the logged-in user
+//        
+//        // 1. Fetch existing order
+//        OrderDto orderDto = orderService.getById(orderId);
+//        
+//        // 2. Fetch the Customer using the principal email
+//        // You need to find your customer ID based on principal.getName()
+//        // Customer customer = customerRepository.findByEmail(principal.getName());
+//        // orderDto.setCustomerId(customer.getCustomerId());
+//
+//        // 3. Finalise and Save via your Service
+//        orderDto.setOrderStatus(OrderStatus.PLACED);
+//        orderDto.setPaymentMethod(paymentMethod);
+//        orderDto.setTransactionStatus(TransactionStatus.SUCCESS);
+//        
+//        orderService.createOrder(orderDto); // Ensure your service links the customerId to the Entity
+//
+//        return "redirect:/user/payment/success";
+//    }
+//    
+//    @GetMapping("/success")
+//    public String paymentSuccess() {
+//        // Path: src/main/resources/templates/user/payment-success.html
+//        return "user/payment-success";
+//    }
 
     /* VIEW */
     @GetMapping
@@ -57,5 +68,25 @@ public class UserPaymentController {
     public String update(@ModelAttribute CustomerDto dto) {
         customerService.register(dto); // register() acts as create/update
         return "redirect:/user/profile";
+    }
+    
+    @PostMapping("/checkout")
+    public String goToPayment(@RequestParam("totalAmount") double totalAmount, Model model) {
+        
+        // 1. Create and SAVE the order to the database first
+        OrderDto newOrder = new OrderDto();
+        newOrder.setTotalAmount(totalAmount);
+        newOrder.setOrderStatus(OrderStatus.PENDING); // Or your equivalent status
+        
+        // This call must save to DB and return the object with the REAL generated ID
+        OrderDto savedOrder = orderService.createOrder(newOrder); 
+        
+        // 2. Map to PaymentDto
+        PaymentDto paymentDto = new PaymentDto();
+        paymentDto.setAmount(savedOrder.getTotalAmount());
+        paymentDto.setOrderId(savedOrder.getOrderId()); // This is now a real ID from DB
+        
+        model.addAttribute("order", paymentDto);
+        return "user/payment"; 
     }
 }

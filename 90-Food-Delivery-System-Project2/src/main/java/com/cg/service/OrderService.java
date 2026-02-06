@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cg.dto.OrderDto;
 import com.cg.entity.DeliveryAgent;
 import com.cg.entity.Order;
+import com.cg.entity.Payment;
 import com.cg.enumeration.OrderStatus;
 import com.cg.iservice.IOrderService;
 import com.cg.mapper.OrderMapper;
@@ -54,8 +56,9 @@ public class OrderService implements IOrderService {
     public OrderDto updateStatus(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-
+ 
         switch (order.getOrderStatus()) {
+
             case PLACED -> orderRepository.updateStatusOnly(orderId, OrderStatus.PREPARING);
             case PREPARING -> {
                 DeliveryAgent agent = deliveryAgentRepository.findFirstByAvailabilityTrue()
@@ -64,39 +67,40 @@ public class OrderService implements IOrderService {
                 deliveryAgentRepository.save(agent);
                 orderRepository.updateStatusAndAgent(orderId, OrderStatus.PICKED_UP, agent);
             }
+
             case PICKED_UP -> orderRepository.updateStatusOnly(orderId, OrderStatus.OUT_FOR_DELIVERY);
             case OUT_FOR_DELIVERY -> {
                 // Explicitly set the new status
                 order.setOrderStatus(OrderStatus.DELIVERED);
-                
+
                 // Handle Cash on Delivery Payment
-                if (order.getPayment() != null && "CASH_ON_DELIVERY".equals(order.getPayment().toString())) {
+                if (order.getPayment() != null
+&& order.getPayment().getPaymentMethod() == com.cg.enumeration.PaymentMethod.CASH_ON_DELIVERY) {
                     order.setTransactionStatus(com.cg.enumeration.TransactionStatus.SUCCESS);
                 }
-
                 // Release the Agent
                 if (order.getDeliveryAgent() != null) {
                     DeliveryAgent agent = order.getDeliveryAgent();
                     agent.setAvailability(true);
                     deliveryAgentRepository.save(agent);
                 }
-                
                 // Save and force immediate database update
                 orderRepository.saveAndFlush(order);
             }
             default -> throw new IllegalStateException("Invalid status transition from: " + order.getOrderStatus());
         }
-
+ 
         // Fetch fresh data for the DTO
         Order updated = orderRepository.findById(orderId).orElse(null);
         return OrderMapper.toDto(updated);
     }
-
+ 
     @Override
-    public OrderDto getById(Long id) {
-        return orderRepository.findById(id)
-                .map(OrderMapper::toDto)
-                .orElseThrow();
+    @Transactional(readOnly = true)
+    public OrderDto getById(Long id) throws NotFoundException {
+        Order order = orderRepository.findByIdWithPaymentAndAgent(id)
+            .orElseThrow(NotFoundException::new);
+        return map(order);
     }
 
     @Override
@@ -127,5 +131,72 @@ public class OrderService implements IOrderService {
 		Order orderDto = orderRepository.findById(orderId).orElseThrow();
 		orderDto.setOrderStatus(OrderStatus.CANCELLED);
 		orderRepository.save(orderDto);
+	}
+
+	@Override
+	@Transactional
+	public OrderDto createOrder(OrderDto newOrderDto) {
+	    Order order = new Order();
+	    order.setTotalAmount(newOrderDto.getTotalAmount());
+	    order.setOrderDate(LocalDateTime.now());
+	    order.setOrderStatus(OrderStatus.PENDING);
+	    
+	    // CRITICAL: If you have a customerId in the DTO, link it here
+	    if (newOrderDto.getCustomerId() != null) {
+	        customerRepository.findById(newOrderDto.getCustomerId())
+	            .ifPresent(order::setCustomer);
+	    }
+	    
+	    Order savedOrder = orderRepository.save(order);
+	    
+	    // Map back to DTO
+	    OrderDto savedDto = OrderMapper.toDto(savedOrder);
+	    return savedDto;
+	}
+	
+	@Override
+	public List<DeliveryAgent> getAvailableAgents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public OrderDto map(Order order) {
+	    OrderDto dto = new OrderDto();
+	    dto.setOrderId(order.getOrderId());
+	    dto.setOrderDate(order.getOrderDate());
+	    dto.setOrderStatus(order.getOrderStatus());
+	    dto.setTotalAmount(order.getTotalAmount());
+	    dto.setTransactionStatus(order.getTransactionStatus());
+	    if (order.getCustomer() != null) {
+	        dto.setCustomerId(order.getCustomer().getCustomerId());
+	    }
+ 
+	    if (order.getItems() != null) {
+	        dto.setItemIds(order.getItems().stream()
+	            .map(mi -> mi.getItemId())
+	            .toList());
+	    }
+ 
+	    Payment payment = order.getPayment();
+
+	    if (payment != null) {
+	        dto.setPaymentId(payment.getPaymentId());
+	        dto.setPaymentMethod(payment.getPaymentMethod()); // enum
+
+	        if (payment.getTransactionStatus() != null) {
+	            dto.setTransactionStatus(payment.getTransactionStatus());
+	        }
+	    }
+ 
+	    DeliveryAgent agent = order.getDeliveryAgent();
+
+	    if (agent != null) {
+	        dto.setDeliveryAgentId(agent.getAgentId());
+	        dto.setDeliveryAgentName(agent.getAgentName());
+	        dto.setDeliveryAgentPhone(agent.getContact());
+	    }
+ 
+	    return dto;
 	}
 }

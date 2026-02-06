@@ -12,10 +12,12 @@ import com.cg.iservice.IMenuItemService;
 import com.cg.iservice.IOrderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -38,13 +40,13 @@ public class UserOrderController {
     @PostMapping("/place")
     public String placeOrder(@SessionAttribute("cart") Map<Long, CartItem> cart,
                              @RequestParam("paymentMethod") PaymentMethod paymentMethod,
-                             Authentication auth) {
+                             Authentication auth,
+                             RedirectAttributes redirectAttributes) { // Added RedirectAttributes
         
         CustomerDto customer = customerService.getByEmail(auth.getName());
         List<Long> itemIds = new ArrayList<>();
         double total = 0;
 
-        // Calculate totals and extract IDs from the session cart
         for (CartItem ci : cart.values()) {
             MenuItemDto item = menuItemService.getById(ci.getItem().getItemId());
             for (int i = 0; i < ci.getQuantity(); i++) {
@@ -57,27 +59,38 @@ public class UserOrderController {
         orderDto.setCustomerId(customer.getCustomerId());
         orderDto.setOrderDate(LocalDateTime.now());
         orderDto.setItemIds(itemIds);
-        orderDto.setTotalAmount(total + 20); // Adding delivery fee
+        orderDto.setTotalAmount(total + 20); 
         orderDto.setPaymentMethod(paymentMethod);
 
-        // CORE LOGIC: Set status based on Payment Method
         switch (paymentMethod) {
             case UPI:
             case NET_BANKING:
                 orderDto.setTransactionStatus(TransactionStatus.SUCCESS);
                 orderDto.setOrderStatus(OrderStatus.PLACED);
                 break;
-
             case CASH_ON_DELIVERY:
-                // Initially PENDING for COD
                 orderDto.setTransactionStatus(TransactionStatus.PENDING); 
                 orderDto.setOrderStatus(OrderStatus.PLACED);
                 break;
         }
          
-        orderService.place(orderDto);
-        cart.clear(); // Clear cart after successful placement
-        return "redirect:/user/orders/my-orders";
+        // Assuming place returns the saved DTO with the generated ID
+        OrderDto savedOrder = orderService.place(orderDto);
+        
+        cart.clear(); 
+
+        // Add attributes to be used in payment-success.html
+        redirectAttributes.addFlashAttribute("orderId", savedOrder.getOrderId());
+        redirectAttributes.addFlashAttribute("paymentMethod", paymentMethod);
+        redirectAttributes.addFlashAttribute("totalAmount", savedOrder.getTotalAmount());
+
+        return "redirect:/user/orders/success";
+    }
+
+    // Map the success URL to the HTML file
+    @GetMapping("/success")
+    public String showSuccess() {
+        return "user/payment-success";
     }
 
     /* -------------------- LIST CUSTOMER ORDERS -------------------- */
@@ -90,7 +103,7 @@ public class UserOrderController {
 
     /* -------------------- VIEW ORDER DETAILS -------------------- */
     @GetMapping("/{id}")
-    public String orderDetails(@PathVariable Long id, Model model) {
+    public String orderDetails(@PathVariable Long id, Model model) throws NotFoundException {
         model.addAttribute("order", orderService.getById(id));
         return "user/order-details";
     }

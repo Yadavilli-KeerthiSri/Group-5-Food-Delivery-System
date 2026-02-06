@@ -7,22 +7,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
-        /* Define the primary font and light background color */
         body { font-family: 'Inter', sans-serif; background-color: #fff1f2; overflow-x: hidden; }
         
-        /* Container for the floating emojis */
         .food-container { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 0; pointer-events: none; /* Allows clicks through the background */
+            z-index: 0; pointer-events: none; 
         }
         
-        /* Individual floating item styling */
         .floating-item { 
             position: absolute; bottom: -200px; font-size: 7rem; 
             opacity: 0.5; animation: floatUp linear infinite;
         }
 
-        /* Keyframe animation for floating effect */
         @keyframes floatUp {
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
             10% { opacity: 0.5; }
@@ -30,18 +26,11 @@
             100% { transform: translateY(-130vh) rotate(360deg); opacity: 0; }
         }
 
-        /* Glassmorphic card effect (Tailwind does most of the work, we add backdrop-blur) */
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             z-index: 10; position: relative;
             border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-
-        /* Smooth selection highlight for payment methods without JS */
-        .payment-label:has(input:checked) {
-            border-color: #f43f5e !important;
-            background-color: #fff1f2 !important;
         }
     </style>
 </head>
@@ -68,7 +57,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </a>
-                <!-- Added a stylish icon container -->
                 <div class="bg-white p-4 rounded-3xl shadow-sm border border-rose-100 text-3xl">🛍️</div>
                 <h1 class="text-4xl font-extrabold text-slate-800">Your Cart</h1>
             </div>
@@ -110,82 +98,45 @@
                 </div>
             </div>
 
-            <!-- Summary Sidebar -->
-            <div class="lg:col-span-1">
-                <div class="glass-card rounded-[3rem] p-8 shadow-2xl border border-rose-50 sticky top-10">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Summary 🍭</h2>
-                    
-                    <div class="space-y-4 border-b border-dashed border-slate-200 pb-6 mb-6">
-                        <div class="flex justify-between text-slate-500 font-semibold">
-                            <span>Subtotal</span>
-                            <span>₹<span th:text="${total}">0</span></span>
-                        </div>
-                        <div class="flex justify-between text-slate-500 font-semibold">
-                            <span>Delivery Fee</span>
-                            <span>₹20</span>
-                        </div>
-                        <div class="pt-4 flex justify-between items-end">
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Grand Total</p>
-                                <p class="text-4xl font-black text-slate-900">₹<span th:text="${total + 20}">0</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SIDE-BY-SIDE BUTTONS -->
-                    <div class="flex gap-3">
-                        <a th:href="@{/user/cart/view(step='payment')}"
-                             class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-rose-100 flex items-center justify-center text-xs transition-all"
-                             th:classappend="${param.step != null} ? 'bg-emerald-500 hover:bg-emerald-600' : ''">
-                             <span th:text="${param.step != null} ? 'Method Ready ✓' : 'Proceed Payment 💳'">Proceed Payment 💳</span>
-                         </a>
-
-                         <button form="orderForm" type="submit"
-                                 class="flex-1 bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-2xl shadow-lg text-xs transition-all"
-                                 th:disabled="${param.step == null}"
-                                 th:classappend="${param.step == null} ? 'opacity-50 cursor-not-allowed' : ''">
-                                 Place Order 🛒
-                          </button>
-                      </div>
-
-                    <!-- PAYMENT SECTION (Hidden until Proceed is clicked) -->
-                    <form id="orderForm" th:if="${param.step != null}" th:action="@{/user/orders/place}" method="post" class="mt-8 space-y-6">
-                        <input type="hidden" name="totalAmount" th:value="${total + 20}">
-                        
-                        <div class="space-y-3">
-                            <p class="text-xs font-bold text-slate-400 uppercase text-center">Select Method</p>
-                            <div class="grid grid-cols-3 gap-2">
-                                <label class="payment-label flex flex-col items-center justify-center p-3 bg-slate-50 border-2 border-slate-100 rounded-2xl cursor-pointer hover:border-rose-200 transition-all">
-                                    <span class="text-xl mb-1">💵</span>
-                                    <span class="font-bold text-[10px] text-slate-700">COD</span>
-                                    <input type="radio" name="paymentMethod" value="COD" required class="hidden">
-                                </label>
-
-                                <label class="payment-label flex flex-col items-center justify-center p-3 bg-slate-50 border-2 border-slate-100 rounded-2xl cursor-pointer hover:border-rose-200 transition-all">
-                                    <span class="text-xl mb-1">📱</span>
-                                    <span class="font-bold text-[10px] text-slate-700">UPI</span>
-                                    <input type="radio" name="paymentMethod" value="UPI" class="hidden">
-                                </label>
-
-                                <label class="payment-label flex flex-col items-center justify-center p-3 bg-slate-50 border-2 border-slate-100 rounded-2xl cursor-pointer hover:border-rose-200 transition-all">
-                                    <span class="text-xl mb-1">🏦</span>
-                                    <span class="font-bold text-[10px] text-slate-700">BANK</span>
-                                    <input type="radio" name="paymentMethod" value="NET_BANKING" class="hidden">
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <a th:href="@{/user/cart/view}" 
-                               class="text-xs text-slate-400 hover:text-rose-500 font-medium underline underline-offset-4 decoration-slate-200">
-                                Clear Selection
-                            </a>
-                        </div>
-                    </form>
+            <!-- Summary Sidebar (Inside Cart Page) -->
+<div class="lg:col-span-1">
+    <div class="glass-card rounded-[3rem] p-8 shadow-2xl border border-rose-50 sticky top-10">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Summary 🍭</h2>
+                            
+        <div class="space-y-4 border-b border-dashed border-slate-200 pb-6 mb-6">
+            <div class="flex justify-between text-slate-500 font-semibold">
+                <span>Subtotal</span>
+                <span>₹<span th:text="${total}">0</span></span>
+            </div>
+            <div class="flex justify-between text-slate-500 font-semibold">
+                <span>Delivery Fee</span>
+                <span>₹20</span>
+            </div>
+            <div class="pt-4 flex justify-between items-end">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Grand Total</p>
+                    <p class="text-4xl font-black text-slate-900">₹<span th:text="${total + 20}">0</span></p>
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Update this form to go to your Payment Controller -->
+        <form th:action="@{/user/payment/checkout}" method="post">
+            <input type="hidden" name="totalAmount" th:value="${total + 20}">
+            
+            <button type="submit" 
+                    class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-5 rounded-2xl shadow-lg shadow-rose-200 flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-95">
+                <span class="text-lg">Go to Payment</span>
+                <span class="text-xl">💳</span>
+            </button>
+        </form>
+
+        <p class="text-center text-[10px] text-slate-400 mt-6 uppercase tracking-widest font-bold">
+            Fast & Secure Checkout
+        </p>
+    </div>
+</div>
+        </div>
+    </div>
 </body>
 </html>

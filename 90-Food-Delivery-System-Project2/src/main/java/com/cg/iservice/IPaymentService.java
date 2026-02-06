@@ -6,7 +6,7 @@ import com.cg.dto.PaymentDto;
 
 public interface IPaymentService {
 
-    PaymentDto makePayment(PaymentDto dto);
+	void makePayment(PaymentDto dto);
 
     PaymentDto getById(Long id);
 

@@ -1,6 +1,7 @@
 package com.cg.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,4 +33,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Transactional
     @Query("UPDATE Order o SET o.orderStatus = :status, o.deliveryAgent = :agent WHERE o.orderId = :id")
     void updateStatusAndAgent(@Param("id") Long id, @Param("status") OrderStatus status, @Param("agent") DeliveryAgent agent);
+    
+    @Query("""
+    	    select o from Order o
+    	    left join fetch o.payment p
+    	    left join fetch o.deliveryAgent da
+    	    where o.orderId = :id
+    	""")
+    	Optional<Order> findByIdWithPaymentAndAgent(@Param("id") Long id);
 }

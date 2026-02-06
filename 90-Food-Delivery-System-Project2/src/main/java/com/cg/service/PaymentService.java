@@ -5,10 +5,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cg.dto.PaymentDto;
+import com.cg.entity.Order;
 import com.cg.entity.Payment;
-import com.cg.enumeration.TransactionStatus;
 import com.cg.iservice.IPaymentService;
 import com.cg.mapper.PaymentMapper;
 import com.cg.repository.OrderRepository;
@@ -24,14 +25,19 @@ public class PaymentService implements IPaymentService {
     private OrderRepository orderRepository;
 
     @Override
-    public PaymentDto makePayment(PaymentDto dto) {
-        Payment entity = PaymentMapper.fromCreateDto(
-                dto,
-                oid -> orderRepository.findById(oid).orElse(null)
-        );
-        entity.setTransactionStatus(TransactionStatus.SUCCESS);
-        Payment saved = paymentRepository.save(entity);
-        return PaymentMapper.toDto(saved);
+    @Transactional
+    public void makePayment(PaymentDto dto) {
+        Payment payment = new Payment();
+        payment.setAmount(dto.getAmount());
+        payment.setPaymentMethod(dto.getPaymentMethod());
+        payment.setTransactionStatus(dto.getTransactionStatus());
+        
+        // Link to existing Order Entity
+        Order order = orderRepository.findById(dto.getOrderId())
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        payment.setOrder(order);
+        
+        paymentRepository.save(payment);
     }
 
     @Override

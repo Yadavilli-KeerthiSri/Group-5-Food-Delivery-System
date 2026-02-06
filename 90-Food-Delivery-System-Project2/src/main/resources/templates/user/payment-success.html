@@ -29,17 +29,17 @@
             Hooray! Your payment was successful and your order has been sent to the kitchen. Get ready for something delicious! 🍕
         </p>
 
-        <!-- Action Buttons -->
         <div class="space-y-4">
-            <a th:href="@{/user/orders}" class="block w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-200 transition-all transform active:scale-95 flex items-center justify-center gap-2">
-                View My Orders
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-            </a>
-            
-            <a th:href="@{/user/restaurants}" class="block w-full text-sm font-semibold text-slate-400 hover:text-emerald-600 transition-colors">
-                Order more food
-            </a>
-        </div>
+    <!-- Link to the history page we just created -->
+    <a th:href="@{/user/orders/my-orders}" 
+       class="block w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
+        View My Orders
+    </a>
+    
+    <a th:href="@{/user/restaurants/dashboard}" class="block w-full text-sm font-semibold text-slate-400 hover:text-emerald-600">
+        Order more food
+    </a>
+</div>
 
         <!-- Order Estimate Footer -->
         <div class="mt-10 pt-8 border-t border-slate-50">
