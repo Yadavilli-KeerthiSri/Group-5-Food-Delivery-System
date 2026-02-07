@@ -2,6 +2,9 @@ package com.cg.controller.user;
 
 import com.cg.model.CartItem;
 import com.cg.service.MenuItemService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +29,7 @@ public class UserCartController {
     /* ADD ITEM */
     @GetMapping("/add/{id}")
     public String add(@PathVariable Long id,
-                      @ModelAttribute("cart") Map<Long, CartItem> cart) {
-
+                      @ModelAttribute("cart") Map<Long, CartItem> cart,  HttpServletRequest request) {
         cart.compute(id, (key, cartItem) -> {
             if (cartItem == null) {
                 return new CartItem(menuItemService.getById(id));
@@ -35,8 +37,9 @@ public class UserCartController {
             cartItem.setQuantity(cartItem.getQuantity() + 1);
             return cartItem;
         });
-
-        return "redirect:/user/cart/view";
+     // Get the previous page URL (restaurant menu page)
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/user/restaurants/dashboard");
     }
 
     /* INCREASE QTY */
@@ -74,16 +77,15 @@ public class UserCartController {
     /* VIEW CART */
     @GetMapping("/view")
     public String view(@ModelAttribute("cart") Map<Long, CartItem> cart,
-                       Model model) {
-
+                       Model model, HttpServletRequest request) {
         double total = cart.values()
                 .stream()
                 .mapToDouble(CartItem::getSubtotal)
                 .sum();
-
         model.addAttribute("cartItems", cart.values());
         model.addAttribute("total", total);
-
+        String referer = request.getHeader("Referer");
+        model.addAttribute("previousPage", referer != null ? referer : "/user/dashboard");
         return "user/cart";
     }
 }

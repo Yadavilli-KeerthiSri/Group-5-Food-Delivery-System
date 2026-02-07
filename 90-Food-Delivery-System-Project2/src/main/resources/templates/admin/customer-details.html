@@ -71,12 +71,15 @@
                         <span class="text-sm font-medium text-slate-400">Contact Number</span>
                         <span class="text-slate-700 font-semibold" th:text="${customer.contact}">+123456789</span>
                     </div>
-                    <div class="pt-2">
-                        <span class="text-sm font-medium text-slate-400 block mb-2">Primary Address</span>
-                        <p class="text-slate-700 font-semibold leading-relaxed" th:text="${customer.address}">
-                            123 Street Name, City, Country
-                        </p>
-                    </div>
+                    <div
+
+							class="flex items-center justify-between border-b border-slate-100 pb-3">
+<span class="text-sm font-medium text-slate-400">Primary
+
+								Address</span> <span class="text-slate-700 font-semibold"
+
+								th:text="${customer.address}">Hyderabad</span>
+</div>
                 </div>
             </div>
         </div>

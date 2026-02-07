@@ -25,7 +25,7 @@ public class Restaurant {
 
 	    private Double ratings;
 	    
-	    private String imageNames;
+	    private String imageName;
 
 	    @OneToMany(
 	        mappedBy = "restaurant",
@@ -77,10 +77,10 @@ public class Restaurant {
 		this.menuItems = menuItems;
 	}
 	
-	public String getImageNames() {
-		return imageNames;
+	public String getImageName() {
+		return imageName;
 	}
-	public void setImageNames(String imageNames) {
-		this.imageNames = imageNames;
+	public void setImageNames(String imageName) {
+		this.imageName = imageName;
 	}
 }

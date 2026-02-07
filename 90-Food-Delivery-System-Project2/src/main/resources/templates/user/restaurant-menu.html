@@ -22,19 +22,27 @@
 
     <!-- Header Section -->
     <header class="bg-white border-b border-orange-100 px-6 py-10 rounded-b-[3rem] shadow-sm mb-8">
-        <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="text-center md:text-left">
-                <p class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-2">Ordering From</p>
-                <h2 class="text-4xl font-black text-slate-800 tracking-tight" th:text="${restaurant.restaurantName}">Restaurant Name</h2>
-            </div>
-            <div class="flex gap-4">
-                <div class="bg-orange-50 px-4 py-2 rounded-xl border border-orange-100">
-                    <p class="text-[10px] font-bold text-orange-400 uppercase">Avg. Prep</p>
-                    <p class="text-sm font-bold text-orange-700">25-30 Mins</p>
+        <div class="max-w-5xl mx-auto">
+            <!-- BACK BUTTON -->
+            <a href="javascript:history.back()" class="inline-flex items-center gap-2 text-slate-400 hover:text-orange-500 font-bold text-xs uppercase tracking-widest mb-6 transition-colors group">
+                <span class="bg-slate-50 group-hover:bg-orange-50 p-2 rounded-full">←</span>
+                Back to Restaurants
+            </a>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-center md:text-left">
+                    <p class="text-orange-500 font-bold text-xs uppercase tracking-widest mb-2">Ordering From</p>
+                    <h2 class="text-4xl font-black text-slate-800 tracking-tight" th:text="${restaurant.restaurantName}">Restaurant Name</h2>
                 </div>
-                <div class="bg-green-50 px-4 py-2 rounded-xl border border-green-100">
-                    <p class="text-[10px] font-bold text-green-400 uppercase">Safety</p>
-                    <p class="text-sm font-bold text-green-700">Verified</p>
+                <div class="flex gap-4">
+                    <div class="bg-orange-50 px-4 py-2 rounded-xl border border-orange-100">
+                        <p class="text-[10px] font-bold text-orange-400 uppercase">Avg. Prep</p>
+                        <p class="text-sm font-bold text-orange-700">25-30 Mins</p>
+                    </div>
+                    <div class="bg-green-50 px-4 py-2 rounded-xl border border-green-100">
+                        <p class="text-[10px] font-bold text-green-400 uppercase">Safety</p>
+                        <p class="text-sm font-bold text-green-700">Verified</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,44 +56,28 @@
         
         <!-- MENU GRID -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div th:each="i : ${menuItems}" class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-100/50 transition-all group">
-<div class="flex justify-between items-start">
-<div class="flex-1">
-<span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-3"
+            <div th:each="i : ${menuItems}" class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-100/50 transition-all group">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-3" th:text="${i.category}">Category</span>
+                        <h4 class="text-lg font-bold text-slate-800 group-hover:text-orange-600 transition-colors" th:text="${i.itemName}">Item Name</h4>
+                        <p class="text-2xl font-black text-slate-900 mt-2">₹<span th:text="${i.price}">0</span></p>
+                    </div>
+             
+                    <div class="ml-4 flex flex-col items-center">
+                        <div class="w-24 h-24 bg-orange-50 rounded-2xl flex items-center justify-center text-3xl mb-4 overflow-hidden"
+                             th:with="hasImg=${i.imageNames != null and !#strings.isEmpty(i.imageNames)}">
+                            <img th:if="${hasImg}" th:src="${i.imageNames}" alt="Food image" class="w-24 h-24 object-cover rounded-2xl" />
+                            <span th:unless="${hasImg}">🍜</span>
+                        </div>
+                    </div>
+                </div>
 
-              th:text="${i.category}">Category</span>
- 
-        <h4 class="text-lg font-bold text-slate-800 group-hover:text-orange-600 transition-colors"
-
-            th:text="${i.itemName}">Item Name</h4>
-<p class="text-2xl font-black text-slate-900 mt-2">₹<span th:text="${i.price}">0</span></p>
-</div>
- 
-      <div class="ml-4 flex flex-col items-center">
-<div class="w-24 h-24 bg-orange-50 rounded-2xl flex items-center justify-center text-3xl mb-4 overflow-hidden"
-
-             th:with="hasImg=${i.imageNames != null and !#strings.isEmpty(i.imageNames)}">
-<img th:if="${hasImg}"
-
-               th:src="${i.imageNames}"  
-
-               alt="Food image"
-
-               class="w-24 h-24 object-cover rounded-2xl" />
-<span th:unless="${hasImg}">🍜2</span>
-</div>
-</div>
-</div>
-
-<!-- Add Button -->
-<a th:href="@{/user/cart/add/{id}(id=${i.itemId})}" 
-
-                           class="w-full bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-2 px-6 rounded-xl transition-all text-center text-sm shadow-sm active:scale-90">
-
-                            ADD
-</a>
-</div>
-</div>
+                <!-- Add Button -->
+                <a th:href="@{/user/cart/add/{id}(id=${i.itemId})}" 
+                   class="block w-full bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-bold py-2 px-6 rounded-xl transition-all text-center text-sm shadow-sm active:scale-90">
+                    ADD
+                </a>
             </div>
         </div>
 
