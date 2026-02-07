@@ -57,7 +57,7 @@ public class CustomerService implements ICustomerService {
     }
 
     public CustomerDto saveUser(CustomerDto dto) {
-        // For generic save; encode only if raw password provided
+        // This is where the ONLY hash should happen
         Customer entity = CustomerMapper.fromCreateDto(dto, passwordEncoder::encode);
         Customer saved = customerRepository.save(entity);
         return CustomerMapper.toDto(saved);

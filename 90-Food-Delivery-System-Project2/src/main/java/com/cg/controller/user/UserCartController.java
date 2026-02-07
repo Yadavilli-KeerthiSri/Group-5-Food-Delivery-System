@@ -88,4 +88,22 @@ public class UserCartController {
         model.addAttribute("previousPage", referer != null ? referer : "/user/dashboard");
         return "user/cart";
     }
+    
+    @GetMapping("/add-more")
+    public String addMore(@ModelAttribute("cart") Map<Long, CartItem> cart) {
+         if (cart == null || cart.isEmpty()) {
+             // If cart is empty, go to restaurants list (or /user/dashboard if you prefer)
+             return "redirect:/user/restaurants";
+         }
+         
+         // Derive restaurantId from any item in the cart
+         CartItem any = cart.values().iterator().next();
+         Long restaurantId = (any != null && any.getItem() != null)
+                 ? any.getItem().getRestaurantId()
+                 : null; 
+         // CRITICAL: append ?fromCart=1 so the Menu page knows you arrived from Cart
+         return (restaurantId != null)
+                 ? "redirect:/user/restaurants/" + restaurantId + "?fromCart=1"
+                 : "redirect:/user/restaurants";
+    }
 }

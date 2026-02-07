@@ -57,11 +57,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerUser(CustomerDto customer) {
-    	
-        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+        // REMOVE OR COMMENT OUT THIS LINE:
+        // customer.setPassword(passwordEncoder.encode(customer.getPassword())); 
+
         customer.setRole("ROLE_USER");
-        customerService.saveUser(customer);
+        customerService.saveUser(customer); // The Mapper inside the service will do the hashing correctly
         return "redirect:/login";
-        
     }
 }

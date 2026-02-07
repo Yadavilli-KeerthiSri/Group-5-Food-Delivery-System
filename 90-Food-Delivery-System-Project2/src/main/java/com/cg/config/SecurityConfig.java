@@ -62,7 +62,9 @@ public class SecurityConfig {
  
         http
 
-            .csrf(csrf -> csrf.disable().authenticationProvider(authenticationProvider()))
+            .csrf(csrf -> csrf.disable())
+            
+            .authenticationProvider(authenticationProvider())
  
             .authorizeHttpRequests(auth -> auth
 
