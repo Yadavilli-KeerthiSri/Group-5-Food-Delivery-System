@@ -14,4 +14,6 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long>{
     List<MenuItem> findByItemNameContainingIgnoreCase(String keyword);
 
     List<MenuItem> findTop10ByOrderByPriceAsc();
+    
+    MenuItem findByItemName(String itemName);
 }

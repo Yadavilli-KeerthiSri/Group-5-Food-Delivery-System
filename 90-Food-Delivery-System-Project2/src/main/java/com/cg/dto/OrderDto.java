@@ -3,7 +3,8 @@ package com.cg.dto;
 import java.time.LocalDateTime;
 
 import java.util.List;
- 
+import java.util.Map;
+
 import com.cg.enumeration.OrderStatus;
 import com.cg.enumeration.PaymentMethod;
 import com.cg.enumeration.TransactionStatus;
@@ -23,11 +24,11 @@ public class OrderDto {
     private Long deliveryAgentId;
  
     // items in this order (by IDs)
-
     private List<Long> itemIds;
+    
+    private Map<String, OrderItemDetail> itemDetails;
  
     // payment ID if exists (1-1 relation)
-
     private Long paymentId;
 
     private PaymentMethod paymentMethod;
@@ -39,22 +40,6 @@ public class OrderDto {
     private String deliveryAgentPhone;  // optional
  
     public OrderDto() {}
- 
-    public String getDeliveryAgentName() {
-		return deliveryAgentName;
-	}
- 
-	public void setDeliveryAgentName(String deliveryAgentName) {
-		this.deliveryAgentName = deliveryAgentName;
-	}
- 
-	public String getDeliveryAgentPhone() {
-		return deliveryAgentPhone;
-	}
- 
-	public void setDeliveryAgentPhone(String deliveryAgentPhone) {
-		this.deliveryAgentPhone = deliveryAgentPhone;
-	}
  
 	public OrderDto(Long orderId, LocalDateTime orderDate, OrderStatus orderStatus, double totalAmount, Long customerId,
 			Long deliveryAgentId, List<Long> itemIds, Long paymentId, PaymentMethod paymentMethod,
@@ -110,6 +95,58 @@ public class OrderDto {
 	}
 	public void setTransactionStatus(TransactionStatus transactionStatus) {
 		this.transactionStatus = transactionStatus;
+	}
+	
+	public String getDeliveryAgentName() {
+		return deliveryAgentName;
+	}
+	public void setDeliveryAgentName(String deliveryAgentName) {
+		this.deliveryAgentName = deliveryAgentName;
+	}
+ 
+	public String getDeliveryAgentPhone() {
+		return deliveryAgentPhone;
+	}
+	public void setDeliveryAgentPhone(String deliveryAgentPhone) {
+		this.deliveryAgentPhone = deliveryAgentPhone;
+	}
+
+	public Map<String, OrderItemDetail> getItemDetails() {
+		return itemDetails;
+	}
+	public void setItemDetails(Map<String, OrderItemDetail> itemDetails) {
+		this.itemDetails = itemDetails;
+	}
+	
+	// ===== ONLY ONE OrderItemDetail class definition =====
+	
+	public static class OrderItemDetail {
+		private int quantity;
+		private double price;
+		private double subtotal;
+
+		public OrderItemDetail() {}
+		
+		public OrderItemDetail(int quantity, double price) {
+		this.quantity = quantity;
+		this.price = price;
+		this.subtotal = quantity * price;
+		}
+
+		public OrderItemDetail(int quantity, double price, double subtotal) {
+		this.quantity = quantity;
+		this.price = price;
+		this.subtotal = subtotal;
+		}
+
+		public int getQuantity() { return quantity; }
+		public void setQuantity(int quantity) { this.quantity = quantity; }
+
+		public double getPrice() { return price; }
+		public void setPrice(double price) { this.price = price; }
+
+		public double getSubtotal() { return subtotal; }
+		public void setSubtotal(double subtotal) { this.subtotal = subtotal; }
 	}
 }
  

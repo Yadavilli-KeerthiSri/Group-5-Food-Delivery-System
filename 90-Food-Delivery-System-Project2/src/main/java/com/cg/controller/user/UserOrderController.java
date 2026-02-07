@@ -54,6 +54,10 @@ public class UserOrderController {
             }
             total += ci.getSubtotal();
         }
+        
+        System.out.println("Total itemIds in list: " + itemIds.size());
+        System.out.println("ItemIds: " + itemIds);
+        System.out.println("Total amount before delivery fee: " + total);
 
         OrderDto orderDto = new OrderDto();
         orderDto.setCustomerId(customer.getCustomerId());
@@ -74,6 +78,8 @@ public class UserOrderController {
                 break;
         }
          
+        System.out.println("Final total with delivery fee: " + orderDto.getTotalAmount());
+        
         // Assuming place returns the saved DTO with the generated ID
         OrderDto savedOrder = orderService.place(orderDto);
         

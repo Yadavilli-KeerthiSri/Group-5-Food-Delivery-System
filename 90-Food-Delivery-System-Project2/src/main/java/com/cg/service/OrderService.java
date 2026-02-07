@@ -2,7 +2,10 @@ package com.cg.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import com.cg.repository.CustomerRepository;
 import com.cg.repository.DeliveryAgentRepository;
 import com.cg.repository.MenuItemRepository;
 import com.cg.repository.OrderRepository;
+import com.cg.entity.MenuItem;
 
 @Service
 public class OrderService implements IOrderService {
@@ -36,19 +40,49 @@ public class OrderService implements IOrderService {
 
     @Override
     @Transactional
-    public OrderDto place(OrderDto dto) {
-        // DTO -> Entity
-        Order entity = OrderMapper.fromCreateDto(
-                dto,
-                cid -> customerRepository.findById(cid).orElse(null),
-                aid -> deliveryAgentRepository.findById(aid).orElse(null),
-                ids -> menuItemRepository.findAllById(ids)
-        );
-        entity.setOrderStatus(OrderStatus.PLACED);
-        entity.setOrderDate(LocalDateTime.now());
+    public OrderDto place(OrderDto dto) {    	System.out.println("=== ORDER SERVICE: place() called ===");
+    	System.out.println("ItemIds received: " + dto.getItemIds());
+    	System.out.println("ItemIds size: " + (dto.getItemIds() != null ? dto.getItemIds().size() : "NULL"));
 
-        Order saved = orderRepository.save(entity);
-        return OrderMapper.toDto(saved);
+    	Order entity = new Order();
+    	entity.setOrderStatus(dto.getOrderStatus() != null ? dto.getOrderStatus() : OrderStatus.PLACED);
+    	entity.setOrderDate(LocalDateTime.now());
+    	entity.setTotalAmount(dto.getTotalAmount());
+
+    	// Set customer
+    	if (dto.getCustomerId() != null) {
+    	    customerRepository.findById(dto.getCustomerId())
+    	    .ifPresent(entity::setCustomer);
+    	}
+
+    	// IMPORTANT: Add items from itemIds (which should have duplicates for quantity)
+    	if (dto.getItemIds() != null && !dto.getItemIds().isEmpty()) {
+    	    List<MenuItem> itemsToAdd = new ArrayList<>();
+    	    List<MenuItem> allItems = menuItemRepository.findAllById(dto.getItemIds());
+    	    System.out.println("All items fetched from DB: " + allItems.size());
+    	
+    	// The itemIds list already contains duplicates for quantity
+    	Map<Long, MenuItem> itemMap = allItems.stream().collect(Collectors.toMap(MenuItem::getItemId, item -> item));
+    	
+    	for (Long itemId : dto.getItemIds()) {
+    	     MenuItem item = itemMap.get(itemId);
+    	
+    	if (item != null) {
+    	    itemsToAdd.add(item);
+    	    System.out.println("Adding item: " + item.getItemName() + " (ID: " + item.getItemId() + ")");
+    	}
+    	}
+
+    	System.out.println("Total items being added to order: " + itemsToAdd.size());
+    	entity.setItems(itemsToAdd);
+    	} else {
+    	   System.out.println("NO ITEM IDS PROVIDED!");
+    	}
+
+    	Order saved = orderRepository.save(entity);
+    	System.out.println("Order saved with ID: " + saved.getOrderId());
+    	System.out.println("Items in saved order: " + (saved.getItems() != null ? saved.getItems().size() : "NULL"));
+    	return OrderMapper.toDto(saved);
     }
 
     @Override
@@ -100,7 +134,36 @@ public class OrderService implements IOrderService {
     public OrderDto getById(Long id) throws NotFoundException {
         Order order = orderRepository.findByIdWithPaymentAndAgent(id)
             .orElseThrow(NotFoundException::new);
-        return map(order);
+        
+        OrderDto dto = OrderMapper.toDto(order);
+        
+     // Populate item details with proper quantity counting
+     if (order.getItems() != null && !order.getItems().isEmpty()) {
+         Map<String, OrderDto.OrderItemDetail> itemDetailsMap = new LinkedHashMap<>();
+         Map<String, Integer> itemQuantities = new HashMap<>();
+         Map<String, Double> itemPrices = new HashMap<>();
+
+     // Count all items by name
+     for (MenuItem item : order.getItems()) {
+          String itemName = item.getItemName();
+          itemQuantities.put(itemName, itemQuantities.getOrDefault(itemName, 0) + 1);
+
+     if (!itemPrices.containsKey(itemName)) {
+         itemPrices.put(itemName, item.getPrice());
+     }
+     }
+     
+     // Create detail map
+     itemQuantities.forEach((itemName, qty) -> {
+         double price = itemPrices.get(itemName);
+         double subtotal = qty * price;
+         itemDetailsMap.put(itemName, new OrderDto.OrderItemDetail(qty, price, subtotal));
+     });
+
+     dto.setItemDetails(itemDetailsMap);
+     }
+
+     return dto;
     }
 
     @Override
