@@ -76,16 +76,28 @@ public class UserCartController {
 
     /* VIEW CART */
     @GetMapping("/view")
-    public String view(@ModelAttribute("cart") Map<Long, CartItem> cart,
-                       Model model, HttpServletRequest request) {
-        double total = cart.values()
-                .stream()
+    public String view(@ModelAttribute("cart") Map<Long, CartItem> cart, Model model) {
+        
+        // 1. Calculate Grand Total
+        double total = cart.values().stream()
                 .mapToDouble(CartItem::getSubtotal)
                 .sum();
+
+        // 2. Logic: Determine the "Back" link from the data, not the browser history
+        String previousPage = "/user/dashboard"; // Default fallback
+        
+        if (cart != null && !cart.isEmpty()) {
+            // Get the first item in the cart to find which restaurant we are at
+            CartItem firstEntry = cart.values().iterator().next();
+            if (firstEntry.getItem() != null && firstEntry.getItem().getRestaurantId() != null) {
+                previousPage = "/user/restaurants/" + firstEntry.getItem().getRestaurantId();
+            }
+        }
+
         model.addAttribute("cartItems", cart.values());
         model.addAttribute("total", total);
-        String referer = request.getHeader("Referer");
-        model.addAttribute("previousPage", referer != null ? referer : "/user/dashboard");
+        model.addAttribute("previousPage", previousPage);
+        
         return "user/cart";
     }
     
