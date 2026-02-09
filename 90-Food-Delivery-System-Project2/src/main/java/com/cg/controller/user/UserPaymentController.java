@@ -1,9 +1,7 @@
 package com.cg.controller.user;
 
 import com.cg.dto.CustomerDto;
-import com.cg.dto.OrderDto;
 import com.cg.dto.PaymentDto;
-import com.cg.enumeration.OrderStatus;
 import com.cg.service.CustomerService;
 import com.cg.service.OrderService;
 import com.cg.service.PaymentService;
@@ -72,21 +70,11 @@ public class UserPaymentController {
     
     @PostMapping("/checkout")
     public String goToPayment(@RequestParam("totalAmount") double totalAmount, Model model) {
-        
-        // 1. Create and SAVE the order to the database first
-        OrderDto newOrder = new OrderDto();
-        newOrder.setTotalAmount(totalAmount);
-        newOrder.setOrderStatus(OrderStatus.PENDING); // Or your equivalent status
-        
-        // This call must save to DB and return the object with the REAL generated ID
-        OrderDto savedOrder = orderService.createOrder(newOrder); 
-        
-        // 2. Map to PaymentDto
+        // ✅ Do not persist anything here. Just pass amount to the view.
         PaymentDto paymentDto = new PaymentDto();
-        paymentDto.setAmount(savedOrder.getTotalAmount());
-        paymentDto.setOrderId(savedOrder.getOrderId()); // This is now a real ID from DB
-        
+        paymentDto.setAmount(totalAmount);
+        // No orderId here
         model.addAttribute("order", paymentDto);
-        return "user/payment"; 
+        return "user/payment";
     }
 }

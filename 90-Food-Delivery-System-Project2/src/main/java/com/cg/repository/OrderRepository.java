@@ -41,4 +41,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     	    where o.orderId = :id
     	""")
     	Optional<Order> findByIdWithPaymentAndAgent(@Param("id") Long id);
+    
+    boolean existsByItems_ItemId(Long itemId);   // Order -> items -> itemId
+    
+    boolean existsByItems_Restaurant_RestaurantId(Long restaurantId);
 }

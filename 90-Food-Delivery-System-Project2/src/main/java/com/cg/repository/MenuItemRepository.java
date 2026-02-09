@@ -16,4 +16,6 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long>{
     List<MenuItem> findTop10ByOrderByPriceAsc();
     
     MenuItem findByItemName(String itemName);
+    
+    boolean existsByRestaurant_RestaurantId(Long restaurantId); 
 }

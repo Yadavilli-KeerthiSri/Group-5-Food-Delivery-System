@@ -5,12 +5,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cg.dto.RestaurantDto;
 import com.cg.entity.Restaurant;
 import com.cg.iservice.IRestaurantService;
 import com.cg.mapper.RestaurantMapper;
 import com.cg.repository.MenuItemRepository;
+import com.cg.repository.OrderRepository;
 import com.cg.repository.RestaurantRepository;
 
 @Service
@@ -21,6 +23,9 @@ public class RestaurantService implements IRestaurantService {
 
     @Autowired
     private MenuItemRepository menuItemRepository;
+    
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Override
     public RestaurantDto add(RestaurantDto dto) {
@@ -57,10 +62,12 @@ public class RestaurantService implements IRestaurantService {
 
     @Override
     public List<RestaurantDto> getAll() {
-        return restaurantRepository.findAll()
-                .stream()
-                .map(RestaurantMapper::toDto)
+        List<RestaurantDto> out = restaurantRepository.findAll()
+                .stream().map(RestaurantMapper::toDto)
                 .collect(Collectors.toList());
+        // DEBUG: verify imageName flows (remove later)
+        out.forEach(r -> System.out.println("DTO imageName = " + r.getImageName()));
+        return out;
     }
 
     @Override
@@ -76,21 +83,25 @@ public class RestaurantService implements IRestaurantService {
      * Logic brought back from your previous snippet: 
      * Tries the derived query first, falls back to native query if empty.
      */
+    @Override
     public List<RestaurantDto> findTopForDashboard() {
         List<Restaurant> top = restaurantRepository.findTop6ByOrderByRatingsDesc();
-        
         if (top == null || top.isEmpty()) {
-            top = restaurantRepository.findTopRatedRestaurants(); // native query call
+            top = restaurantRepository.findTopRatedRestaurants();
         }
-        
-        return top.stream()
-                .map(RestaurantMapper::toDto)
-                .collect(Collectors.toList());
+        List<RestaurantDto> out = top.stream().map(RestaurantMapper::toDto).collect(Collectors.toList());
+        // DEBUG (remove later)
+        out.forEach(r -> System.out.println("DASHBOARD DTO imageName = " + r.getImageName()));
+        return out;
     }
 
     @Override
-    public void delete(Long id) {
-        restaurantRepository.deleteById(id);
+    @Transactional
+    public void delete(Long restaurantId) {
+        if (orderRepository.existsByItems_Restaurant_RestaurantId(restaurantId)) {
+            throw new IllegalStateException("Cannot delete: this restaurant has items used in orders.");
+        }
+        restaurantRepository.deleteById(restaurantId);
     }
 
     // Alias for the dashboard method as seen in your previous code

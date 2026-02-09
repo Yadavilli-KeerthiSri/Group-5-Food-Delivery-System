@@ -74,11 +74,30 @@
         <div th:each="r : ${restaurants}"
              class="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-amber-200/40 transition-all duration-300 flex flex-col">
  
-            <!-- Image Placeholder -->
-            <div class="h-48 bg-amber-50 relative overflow-hidden">
-                <div class="absolute inset-0 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
-                    🏪
-                </div>
+             <!-- Card Image -->
+<div class="h-52 bg-orange-50 relative overflow-hidden image-wrap">
+<!-- Actual image sourced from DB path like /images/Biryani.png -->
+<img
+
+          th:if="${r.imageName != null and !#strings.isEmpty(r.imageName)}"
+
+          th:src="@{${r.imageName}}"
+
+          alt="Restaurant image"
+
+          class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+
+          onerror="this.style.display='none'; this.closest('.image-wrap').querySelector('[data-fallback]').style.display='flex';" />
+ 
+        <!-- Fallback emoji if no image or on error -->
+<div data-fallback
+
+             th:style="${(r.imageName == null or #strings.isEmpty(r.imageName)) ? 'display:flex;' : 'display:none;'}"
+
+             class="absolute inset-0 items-center justify-center text-7xl transition-transform duration-700 group-hover:scale-110">
+
+          🏪
+</div>
  
                 <!-- Rating -->
                 <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">

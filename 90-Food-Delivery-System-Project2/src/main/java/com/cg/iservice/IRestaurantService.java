@@ -16,7 +16,7 @@ public interface IRestaurantService {
 
     List<RestaurantDto> findTopRated();
 
-    void delete(Long id);
+    void delete(Long restaurantId);
     
     List<RestaurantDto> findTopForDashboard();
 }

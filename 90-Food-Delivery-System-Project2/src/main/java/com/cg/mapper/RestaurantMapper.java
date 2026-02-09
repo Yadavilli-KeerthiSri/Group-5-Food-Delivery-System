@@ -1,9 +1,7 @@
 package com.cg.mapper;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.cg.dto.RestaurantDto;
 import com.cg.entity.MenuItem;
@@ -14,58 +12,40 @@ public final class RestaurantMapper {
     private RestaurantMapper() {}
 
     // ===== Read =====
-    public static RestaurantDto toDto(Restaurant entity) {
-        if (entity == null) return null;
-        RestaurantDto dto = new RestaurantDto();
-        dto.setRestaurantId(entity.getRestaurantId());
-        dto.setRestaurantName(entity.getRestaurantName());
-        dto.setLocation(entity.getLocation());
-        dto.setCuisine(entity.getCuisine());
-        dto.setRatings(entity.getRatings());
-
-        List<Long> itemIds = entity.getMenuItems() == null ? null :
-            entity.getMenuItems().stream()
-                  .filter(Objects::nonNull)
-                  .map(MenuItem::getItemId)
-                  .collect(Collectors.toList());
-        dto.setMenuItemIds(itemIds);
-        return dto;
+    public static RestaurantDto toDto(Restaurant e) {
+        if (e == null) return null;
+        RestaurantDto d = new RestaurantDto();
+        d.setRestaurantId(e.getRestaurantId());
+        d.setRestaurantName(e.getRestaurantName());
+        d.setLocation(e.getLocation());
+        d.setCuisine(e.getCuisine());
+        d.setRatings(e.getRatings());
+        d.setImageName(e.getImageName()); // <-- IMPORTANT
+        // if you have relation to menu items, map ids here.
+        return d;
     }
 
     // ===== Create =====
-    public static Restaurant fromCreateDto(
-            RestaurantDto dto,
-            Function<List<Long>, List<MenuItem>> menuItemsResolver
-    ) {
-        if (dto == null) return null;
+    public static Restaurant fromCreateDto(RestaurantDto d, Function<List<Long>, List<MenuItem>> loader) {
+        if (d == null) return null;
         Restaurant entity = new Restaurant();
-        entity.setRestaurantId(dto.getRestaurantId());
-        entity.setRestaurantName(dto.getRestaurantName());
-        entity.setLocation(dto.getLocation());
-        entity.setCuisine(dto.getCuisine());
-        entity.setRatings(dto.getRatings());
-
-        if (dto.getMenuItemIds() != null && menuItemsResolver != null) {
-            entity.setMenuItems(menuItemsResolver.apply(dto.getMenuItemIds()));
-        }
+        entity.setLocation(d.getLocation());
+        entity.setCuisine(d.getCuisine());
+        entity.setRatings(d.getRatings());
+        entity.setImageName(d.getImageName()); // <-- IMPORTANT
+        // if you have relation to menu items, load and set here.
         return entity;
     }
 
     // ===== Update =====
-    public static void applyUpdate(
-            RestaurantDto dto,
-            Restaurant target,
-            Function<List<Long>, List<MenuItem>> menuItemsResolver
-    ) {
-        if (dto == null || target == null) return;
-        target.setRestaurantName(dto.getRestaurantName());
-        target.setLocation(dto.getLocation());
-        target.setCuisine(dto.getCuisine());
-        target.setRatings(dto.getRatings());
-
-        if (dto.getMenuItemIds() != null && menuItemsResolver != null) {
-            target.setMenuItems(menuItemsResolver.apply(dto.getMenuItemIds()));
-        }
+    public static void applyUpdate(RestaurantDto d, Restaurant e, Function<List<Long>, List<MenuItem>> loader) {
+        if (d == null || e == null) return;
+        if (d.getRestaurantName() != null) e.setRestaurantName(d.getRestaurantName());
+        if (d.getLocation() != null) e.setLocation(d.getLocation());
+        if (d.getCuisine() != null) e.setCuisine(d.getCuisine());
+        if (d.getRatings() != null) e.setRatings(d.getRatings());
+        if (d.getImageName() != null) e.setImageName(d.getImageName()); // <-- IMPORTANT
+        // update menu items if needed
     }
 
     // ===== Delete helper =====

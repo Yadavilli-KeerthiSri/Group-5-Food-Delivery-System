@@ -25,6 +25,19 @@
             </a>
         </div>
 
+        <!-- ✅ FLASH MESSAGES -->
+        <!-- Error flash -->
+        <div th:if="${error}" class="mb-6 rounded-xl border border-red-200 bg-red-50 text-red-700 px-5 py-4">
+            <strong>Action blocked:</strong>
+            <span th:text="${error}"></span>
+        </div>
+        <!-- Success flash -->
+        <div th:if="${success}" class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 px-5 py-4">
+            <strong>Success:</strong>
+            <span th:text="${success}"></span>
+        </div>
+        <!-- /FLASH MESSAGES -->
+
         <!-- Table Card -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <table class="w-full text-left border-collapse">
@@ -60,7 +73,7 @@
                                     Edit
                                 </a>
                                 <a th:href="@{/admin/agents/delete/{id}(id=${a.agentId})}" 
-                                   onclick="return confirm('Are you sure?')"
+                                   onclick="return confirm('Are you sure?')";
                                    class="text-red-500 hover:text-red-700 font-medium text-sm px-3 py-1 rounded-md hover:bg-red-50 transition-all">
                                     Delete
                                 </a>

@@ -3,6 +3,7 @@ package com.cg.entity;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +25,8 @@ public class Restaurant {
 	    private String cuisine;
 
 	    private Double ratings;
-	    
+	   
+	    @Column(name = "image_name")
 	    private String imageName;
 
 	    @OneToMany(
@@ -80,7 +82,7 @@ public class Restaurant {
 	public String getImageName() {
 		return imageName;
 	}
-	public void setImageNames(String imageName) {
+	public void setImageName(String imageName) {
 		this.imageName = imageName;
 	}
 }

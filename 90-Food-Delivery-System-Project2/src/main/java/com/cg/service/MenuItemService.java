@@ -1,7 +1,6 @@
 package com.cg.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cg.dto.MenuItemDto;
 import com.cg.entity.MenuItem;
-import com.cg.entity.Order;
 import com.cg.mapper.MenuItemMapper;
 import com.cg.repository.MenuItemRepository;
 import com.cg.repository.OrderRepository;
@@ -69,25 +67,12 @@ public class MenuItemService implements IMenuItemService {
     @Override
     @Transactional
     public void delete(Long id) {
-        Optional<MenuItem> itemOptional = menuItemRepository.findById(id);
-        if (itemOptional.isPresent()) {
-            MenuItem item = itemOptional.get();
-
-            // Clear relationships in the Order table (as per your original logic)
-            if (item.getOrders() != null) {
-                for (Order order : item.getOrders()) {
-                    order.setItems(null);
-                    orderRepository.save(order);
-                }
-            }
-
-            menuItemRepository.delete(item);
-            System.out.println("Item " + id + " deleted successfully.");
-        } else {
-            System.out.println("Item " + id + " was already deleted or does not exist.");
+        if (orderRepository.existsByItems_ItemId(id)) {
+            throw new IllegalStateException("Cannot delete: item is used in existing orders.");
         }
+        menuItemRepository.deleteById(id);
     }
-
+    
     @Override
     public List<MenuItemDto> getAll() {
         return menuItemRepository.findAll()
