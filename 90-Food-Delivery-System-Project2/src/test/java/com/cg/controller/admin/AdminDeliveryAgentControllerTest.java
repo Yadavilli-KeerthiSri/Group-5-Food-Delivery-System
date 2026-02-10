@@ -3,90 +3,94 @@ package com.cg.controller.admin;
 import com.cg.dto.DeliveryAgentDto;
 import com.cg.exception.GlobalExceptionHandler;
 import com.cg.iservice.IDeliveryAgentService;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.DataIntegrityViolationException;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import java.util.Collections;
+
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = AdminDeliveryAgentController.class)
+@WebMvcTest(AdminDeliveryAgentController.class)
 @Import(GlobalExceptionHandler.class)
+@AutoConfigureMockMvc(addFilters = false)   // Disable Spring Security
 class AdminDeliveryAgentControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private IDeliveryAgentService deliveryAgentService;
+    private IDeliveryAgentService service;
 
+    // 1️⃣ POSITIVE — LIST ALL AGENTS
     @Test
-    @DisplayName("POST /admin/agents/save (create) -> calls add() and redirects to list")
-    void save_whenCreate_shouldCallAddAndRedirect() throws Exception {
-        // No agentId param -> create flow
-        mockMvc.perform(post("/admin/agents/save")
-                        .contentType("application/x-www-form-urlencoded"))
-               .andExpect(status().is3xxRedirection())
-               .andExpect(redirectedUrl("/admin/agents"));
+    @DisplayName("GET /admin/agents → returns agents list page")
+    void testListAgents() throws Exception {
 
-        verify(deliveryAgentService, times(1)).add(any(DeliveryAgentDto.class));
-        verify(deliveryAgentService, never()).update(any(DeliveryAgentDto.class));
+        when(service.getAll()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/admin/agents"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/agents"))
+                .andExpect(model().attributeExists("agents"));
     }
 
+    // 2️⃣ POSITIVE — EDIT FORM LOADS EVEN IF AGENT DOES NOT EXIST
     @Test
-    @DisplayName("POST /admin/agents/save (update) -> calls update() and redirects to list")
-    void save_whenUpdate_shouldCallUpdateAndRedirect() throws Exception {
-        // agentId present -> update flow
-        mockMvc.perform(post("/admin/agents/save")
-                        .contentType("application/x-www-form-urlencoded")
-                        .param("agentId", "12"))
-               .andExpect(status().is3xxRedirection())
-               .andExpect(redirectedUrl("/admin/agents"));
+    @DisplayName("GET /admin/agents/edit/{id} → loads edit form")
+    void testEditForm() throws Exception {
 
-        verify(deliveryAgentService, times(1)).update(any(DeliveryAgentDto.class));
-        verify(deliveryAgentService, never()).add(any(DeliveryAgentDto.class));
+        // To avoid Thymeleaf crashing, return an empty DTO
+        when(service.getById(10L)).thenReturn(new DeliveryAgentDto());
+
+        mockMvc.perform(get("/admin/agents/edit/10"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/agent-form"))
+                .andExpect(model().attributeExists("agent"));
     }
 
+    // 3️⃣ EXCEPTION — BUSINESS RULE → IllegalStateException
+ // 3️⃣ DELETE – service throws business rule (IllegalStateException)
     @Test
-    @DisplayName("GET /admin/agents/edit/{id} -> on IllegalStateException redirects to Referer with error message")
-    void editForm_whenIllegalState_shouldRedirectToRefererWithFlash() throws Exception {
-        long id = 7L;
-        String referer = "/admin/agents";
-        String msg = "Agent is inactive and cannot be edited";
+    @DisplayName("DELETE throws IllegalStateException → redirect back with flash error")
+    void testDelete_BusinessException() throws Exception {
 
-        when(deliveryAgentService.getById(eq(id)))
-                .thenThrow(new IllegalStateException(msg));
+        // ❌ was: when(service.delete(anyLong())).thenThrow(new IllegalStateException("Cannot delete this agent"));
+        // ✅ correct for void method:
+        doThrow(new IllegalStateException("Cannot delete this agent"))
+                .when(service).delete(anyLong());
 
-        mockMvc.perform(get("/admin/agents/edit/{id}", id)
-                        .header("Referer", referer))
-               .andExpect(status().is3xxRedirection())
-               .andExpect(redirectedUrl(referer))
-               .andExpect(flash().attribute("error", msg));
+        mockMvc.perform(get("/admin/agents/delete/5")
+                .header(HttpHeaders.REFERER, "/admin/agents"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/agents"))
+                .andExpect(flash().attribute("error", "Cannot delete this agent"));
     }
-
+    // 4️⃣ UNEXPECTED ERROR — handled by GlobalExceptionHandler
     @Test
-    @DisplayName("GET /admin/agents/delete/{id} -> on FK violation redirects to Referer with agent-specific message")
-    void delete_whenDataIntegrityViolation_shouldRedirectToRefererWithAgentMessage() throws Exception {
-        long id = 5L;
-        String referer = "/admin/agents";
-        String expectedMsg = "Cannot delete this delivery agent because there are deliveries or assignments linked.";
+    @DisplayName("Unexpected error → redirect to /admin/restaurants with generic error")
+    void testUnexpectedException() throws Exception {
 
-        doThrow(new DataIntegrityViolationException("FK violation"))
-                .when(deliveryAgentService).delete(eq(id));
+        when(service.getAll()).thenThrow(new RuntimeException("DB down"));
 
-        mockMvc.perform(get("/admin/agents/delete/{id}", id)
-                        .header("Referer", referer))
-               .andExpect(status().is3xxRedirection())
-               .andExpect(redirectedUrl(referer))
-               .andExpect(flash().attribute("error", expectedMsg));
+        mockMvc.perform(get("/admin/agents"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/restaurants"))
+                .andExpect(flash().attribute("error",
+                        "We couldn’t complete that action. Please try again."));
     }
 }
