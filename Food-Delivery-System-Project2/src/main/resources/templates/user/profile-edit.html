@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Edit Profile | FoodExec</title>
+ 
+  <!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+ 
+  <!-- Google Font: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+ 
+  <style>
+
+    body { font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">
+ 
+  <div class="max-w-md w-full">
+ 
+    <!-- Back Link -->
+<a th:href="@{/user/profile}" class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-indigo-600 mb-6 transition-colors group">
+<svg class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+</svg>
+
+      Back to Profile
+</a>
+ 
+    <!-- Form Card -->
+<div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+<!-- Accent Top Bar -->
+<div class="h-2 bg-gradient-to-r from-indigo-400 to-sky-400"></div>
+<div class="p-8 md:p-10">
+<div class="mb-8">
+<h2 class="text-2xl font-black text-slate-800">Update Profile</h2>
+<p class="text-slate-400 text-sm mt-1">Keep your delivery details up to date.</p>
+</div>
+ 
+        <!-- Form -->
+<form th:action="@{/user/profile/update}" th:object="${user}" method="post" class="space-y-6">
+<!-- CSRF (guarded so it won't crash when _csrf is null) -->
+<input type="hidden"
+
+                 th:if="${_csrf != null}"
+
+                 th:name="${_csrf.parameterName}"
+
+                 th:value="${_csrf.token}"/>
+ 
+          <!-- Hidden ID -->
+<input type="hidden" th:field="*{customerId}"/>
+ 
+          <!-- Full Name -->
+<div class="space-y-2">
+<label for="customerName" class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400" aria-hidden="true">👤</span>
+<input
+
+                id="customerName"
+
+                type="text"
+
+                th:field="*{customerName}"
+
+                placeholder="Full Name"
+
+                required
+
+                minlength="3"
+
+                maxlength="60"
+
+                inputmode="text"
+
+                autocomplete="name"
+
+                class="w-full pl-11 pr-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300" />
+</div>
+</div>
+ 
+          <!-- Email (Editable) -->
+<div class="space-y-2">
+<label for="email" class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400" aria-hidden="true">✉️</span>
+<input
+
+                id="email"
+
+                type="email"
+
+                th:field="*{email}"
+
+                placeholder="email@example.com"
+
+                required
+
+                maxlength="100"
+
+                autocomplete="email"
+
+                class="w-full pl-11 pr-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300" />
+</div>
+</div>
+ 
+          <!-- Contact Number (Indian 10-digit) -->
+<div class="space-y-2">
+<label for="contact" class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Contact Number</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400" aria-hidden="true">📞</span>
+<input
+
+                id="contact"
+
+                type="tel"
+
+                th:field="*{contact}"
+
+                placeholder="9876543210"
+
+                required
+
+                minlength="10"
+
+                maxlength="10"
+
+                pattern="^[6-9]\d{9}$"
+
+                title="Enter a valid 10-digit Indian mobile number starting with 6-9"
+
+                inputmode="numeric"
+
+                autocomplete="tel-national"
+
+                oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)"
+
+                class="w-full pl-11 pr-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300" />
+</div>
+</div>
+ 
+          <!-- Address -->
+<div class="space-y-2">
+<label for="address" class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Delivery Address</label>
+<div class="relative">
+<span class="absolute top-4 left-0 pl-4 flex items-start text-slate-400" aria-hidden="true">📍</span>
+<textarea
+
+                id="address"
+
+                th:field="*{address}"
+
+                rows="3"
+
+                placeholder="Flat / House, Street, Area, City, PIN"
+
+                required
+
+                minlength="5"
+
+                maxlength="240"
+
+                autocomplete="street-address"
+
+                class="w-full pl-11 pr-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none placeholder:text-slate-300"></textarea>
+</div>
+</div>
+ 
+          <!-- Submit Button -->
+<div class="pt-4">
+<button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-indigo-100 transition-all transform active:scale-95 flex items-center justify-center gap-2">
+<span>Update Profile</span>
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+</svg>
+</button>
+</div>
+</form>
+</div>
+</div>
+ 
+    <!-- Support Info -->
+<p class="text-center mt-8 text-slate-300 text-[10px] font-bold uppercase tracking-widest">
+
+      Logged in as <span th:text="${user.email}" class="text-slate-400">email@example.com</span>
+</p>
+</div>
+ 
+</body>
+</html>
+ 
