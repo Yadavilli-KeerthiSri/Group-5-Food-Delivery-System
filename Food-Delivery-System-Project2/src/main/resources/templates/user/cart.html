@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cart | FoodExec</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fff1f2; overflow-x: hidden; }
+        .food-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .floating-item { position: absolute; bottom: -200px; font-size: 7rem; opacity: 0.5; animation: floatUp linear infinite; }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            100% { transform: translateY(-130vh) rotate(360deg); opacity: 0; }
+        }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); z-index: 10; position: relative; border: 1px solid rgba(255, 255, 255, 0.4); }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-12">
+
+    <!-- Floating Background Decoration -->
+    <div class="food-container">
+        <span class="floating-item" style="left: 5%; animation-duration: 18s;">🧁</span>
+        <span class="floating-item" style="left: 40%; animation-duration: 25s; animation-delay: 8s;">🍩</span>
+        <span class="floating-item" style="left: 20%; animation-duration: 22s; animation-delay: 2s;">🍭</span>
+        <span class="floating-item" style="left: 85%; animation-duration: 20s; animation-delay: 12s;">🍓</span>
+    </div>
+
+    <div class="max-w-6xl mx-auto relative z-10">
+        <!-- HEADER -->
+        <header class="mb-10 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a th:href="${previousPage}" class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 hover:bg-rose-500 hover:text-white transition-all group">
+                    <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </a>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-rose-100 text-3xl">🛍️</div>
+                <h1 class="text-4xl font-extrabold text-slate-800">Your Cart</h1>
+            </div>
+        </header>
+
+        <!-- EMPTY STATE -->
+        <div th:if="${#lists.isEmpty(cartItems)}" class="flex flex-col items-center justify-center min-h-[60vh]">
+            <div class="glass-card rounded-[3rem] p-12 text-center border-2 border-dashed border-rose-200 shadow-xl max-w-lg w-full">
+                <span class="text-7xl mb-6 block animate-bounce">🛒</span>
+                <h3 class="text-3xl font-black text-slate-800">Your cart is empty</h3>
+                <p class="text-slate-500 mt-2 mb-8">Time to fill it with some treats!</p>
+                <a th:href="@{/user/dashboard}" class="bg-rose-500 hover:bg-rose-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg shadow-rose-200 transition-all">Browse Restaurants</a>
+            </div>
+        </div>
+
+        <!-- CART CONTENT -->
+        <div th:unless="${#lists.isEmpty(cartItems)}" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Items List -->
+            <div class="lg:col-span-2 space-y-6">
+                <div th:each="ci : ${cartItems}" class="glass-card p-6 rounded-[2.5rem] shadow-xl border border-slate-100 flex items-center justify-between group transition-all hover:scale-[1.01]">
+                    <div class="flex items-center gap-6">
+                        <div class="w-20 h-20 bg-rose-50 rounded-2xl flex items-center justify-center overflow-hidden shadow-inner">
+                           <!-- Corrected Image Tag -->
+<img th:if="${ci.item.imageNames != null}" 
+     th:src="@{${ci.item.imageNames}}" 
+     class="w-full h-full object-cover" 
+     alt="Food Item">
+                            <span th:unless="${ci.item.imageNames != null}" class="text-4xl">🧁</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800" th:text="${ci.item.itemName}">Item Name</h3>
+                            <p class="text-rose-500 font-black">₹<span th:text="${ci.item.price}">0</span></p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-6">
+                        <div class="flex items-center bg-slate-50 rounded-xl p-1 border">
+                            <a th:href="@{/user/cart/decrease/{id}(id=${ci.item.itemId})}" class="px-3 py-1 font-bold hover:text-rose-500">−</a>
+                            <span class="px-2 font-black text-slate-700" th:text="${ci.quantity}">1</span>
+                            <a th:href="@{/user/cart/increase/{id}(id=${ci.item.itemId})}" class="px-3 py-1 font-bold hover:text-rose-500">+</a>
+                        </div>
+                        <div class="text-right min-w-[80px]">
+                            <p class="font-black text-slate-900">₹<span th:text="${ci.subtotal}">0</span></p>
+                            <a th:href="@{/user/cart/remove/{id}(id=${ci.item.itemId})}" class="text-xs text-red-400 font-bold hover:text-red-600">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="glass-card rounded-[3rem] p-8 shadow-2xl border border-rose-50 sticky top-10">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Summary 🍭</h2>
+                    <div class="space-y-4 border-b border-dashed border-slate-200 pb-6 mb-6">
+                        <div class="flex justify-between text-slate-500 font-semibold">
+                            <span>Subtotal</span>
+                            <span>₹<span th:text="${total}">0</span></span>
+                        </div>
+                        <div class="flex justify-between text-slate-500 font-semibold">
+                            <span>Delivery Fee</span>
+                            <span>₹20</span>
+                        </div>
+                        <div class="pt-4 flex justify-between items-end">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Grand Total</p>
+                                <p class="text-4xl font-black text-slate-900">₹<span th:text="${total + 20}">0</span></p>
+                            </div> 
+                        </div>
+                    </div>
+
+                    <form th:action="@{/user/payment/checkout}" method="post">
+                        <input type="hidden" name="totalAmount" th:value="${total + 20}">
+                        <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-5 rounded-2xl shadow-lg shadow-rose-200 flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-95">
+                            <span class="text-lg">Go to Payment</span>
+                            <span class="text-xl">💳</span>
+                        </button>
+                    </form>
+
+                    <div class="mt-6 text-center">
+                        <a th:href="${previousPage}" class="text-slate-400 hover:text-rose-600 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-colors">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+                            Add More Items
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

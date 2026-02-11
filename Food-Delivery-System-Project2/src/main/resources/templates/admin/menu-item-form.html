@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Menu Item | Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">
+
+    <div class="w-full max-w-lg">
+        <a th:href="@{/admin/menu-items}" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-emerald-600 mb-6 transition-colors">
+            ← Back to Menu List
+        </a>
+
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-emerald-500"></div>
+
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-800">Menu Item Details</h2>
+                <p class="text-slate-500 text-sm">Add or update dishes</p>
+            </div>
+
+            <form th:action="@{/admin/menu-items/save}" th:object="${item}" method="post" class="space-y-5">
+                <!-- IMPORTANT: Self-closing tag for Thymeleaf -->
+                <input type="hidden" th:field="*{itemId}" />
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Item Name</label>
+                    <input type="text" th:field="*{itemName}" required="required"
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Category</label>
+                        <input type="text" th:field="*{category}" required="required"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Price (₹)</label>
+                        <input type="number" step="0.01" th:field="*{price}" required="required"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg" />
+                    </div>
+                </div>
+
+                <!-- FIXED SELECT: Uses restaurantId directly to match DTO -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Assign to Restaurant</label>
+                    <div class="relative">
+                        <select th:field="*{restaurantId}" required="required"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="" th:text="'-- Select Restaurant --'"></option>
+                            <option th:each="r : ${restaurants}"
+                                    th:value="${r.restaurantId}"
+                                    th:text="${r.restaurantName}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-100">
+                        💾 Save Menu Item
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
