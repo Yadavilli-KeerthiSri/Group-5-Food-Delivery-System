@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.cg.controller.user.UserPaymentControllerTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.428 s -- in com.cg.controller.user.UserPaymentControllerTest
