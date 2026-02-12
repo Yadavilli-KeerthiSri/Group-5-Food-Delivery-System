@@ -51,10 +51,10 @@ public class AdminMenuItemController {
 	// CREATE: Handles the POST request to add a new menu item
 	@PostMapping("/save")
 	public String create(@ModelAttribute("item") MenuItemDto dto, @RequestParam("restaurantId") Long restaurantId,
-			RedirectAttributes restaurant) {
+			RedirectAttributes ra) {
 		dto.setRestaurantId(restaurantId);
 		menuItemService.add(dto);
-		restaurant.addFlashAttribute("success", "Menu item added successfully!");
+		ra.addFlashAttribute("success", "Menu item added successfully!");
 		return "redirect:/admin/menu-items";
 	}
 
