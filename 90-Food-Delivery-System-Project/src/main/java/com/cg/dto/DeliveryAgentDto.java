@@ -2,15 +2,33 @@ package com.cg.dto;
 
 import java.util.List;
 
+import jakarta.validation.constraints.*;
+
 public class DeliveryAgentDto {
 	private Long agentId;
+
+	@NotBlank(message = "{agent.name.notblank}")
+	@Size(min = 2, max = 50, message = "{agent.name.size}")
+	@Pattern(regexp = "^[A-Za-z ]+$", message = "{agent.name.pattern}")
 	private String agentName;
+
+	@NotBlank(message = "{agent.contact.notblank}")
+	@Pattern(regexp = "^[0-9]{10}$", message = "{agent.contact.pattern}")
 	private String contact;
+
+	@NotBlank(message = "{agent.vehicle.notblank}")
+	@Size(min = 5, max = 20, message = "{agent.vehicle.size}")
+	@Pattern(regexp = "^[A-Z0-9\\s-]+$", message = "{agent.vehicle.pattern}")
 	private String vehicleDetails;
+
+	// `boolean` primitives can’t be @NotNull; leave as-is.
 	private boolean availability;
 
+	// Optional: validate each id >= 1
+	private List<@NotNull @Positive Long> orderIds;
+
 	// order IDs assigned to this agent (optional, can be large if unbounded)
-	private List<Long> orderIds;
+	// private List<Long> orderIds;
 
 	public DeliveryAgentDto() {
 	}

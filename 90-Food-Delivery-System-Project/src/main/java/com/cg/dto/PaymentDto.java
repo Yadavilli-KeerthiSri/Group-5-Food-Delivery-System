@@ -3,11 +3,23 @@ package com.cg.dto;
 import com.cg.enumeration.PaymentMethod;
 import com.cg.enumeration.TransactionStatus;
 
+import jakarta.validation.constraints.*;
+
 public class PaymentDto {
 	private Long paymentId;
-	private PaymentMethod paymentMethod;
+
+	@NotNull(message = "{payment.method.notnull}")
+	private com.cg.enumeration.PaymentMethod paymentMethod;
+
+	@Positive(message = "{payment.amount.positive}")
+	@Digits(integer = 9, fraction = 2, message = "{payment.amount.digits}")
 	private double amount;
-	private TransactionStatus transactionStatus;
+
+	@NotNull(message = "{payment.txStatus.notnull}")
+	private com.cg.enumeration.TransactionStatus transactionStatus;
+
+	@NotNull(message = "{payment.orderId.notnull}")
+	@Positive(message = "{payment.orderId.positive}")
 	private Long orderId;
 
 	public PaymentDto() {

@@ -1,17 +1,31 @@
 package com.cg.dto;
 
+import jakarta.validation.constraints.*;
 import java.util.List;
 
 public class RestaurantDto {
 	private Long restaurantId;
-	private String restaurantName;
-	private String location;
-	private String cuisine;
-	private Double ratings;
-	private String imageName;
 
-	// Menu item IDs for this restaurant
-	private List<Long> menuItemIds;
+	@NotBlank(message = "{restaurant.name.notblank}")
+	@Size(min = 2, max = 100, message = "{restaurant.name.size}")
+	private String restaurantName;
+
+	@NotBlank(message = "{restaurant.location.notblank}")
+	@Size(min = 2, max = 120, message = "{restaurant.location.size}")
+	private String location;
+
+	@NotBlank(message = "{restaurant.cuisine.notblank}")
+	@Size(min = 2, max = 80, message = "{restaurant.cuisine.size}")
+	private String cuisine;
+
+	@DecimalMin(value = "0.0", inclusive = true, message = "{restaurant.ratings.min}")
+	@DecimalMax(value = "5.0", inclusive = true, message = "{restaurant.ratings.max}")
+	private Double ratings;
+
+	// Optional list of item IDs
+	private List<@NotNull @Positive Long> menuItemIds;
+
+	private String imageName;
 
 	public RestaurantDto() {
 	}

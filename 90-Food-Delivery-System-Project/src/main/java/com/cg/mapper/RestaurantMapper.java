@@ -32,6 +32,7 @@ public final class RestaurantMapper {
 		if (d == null)
 			return null;
 		Restaurant entity = new Restaurant();
+		entity.setRestaurantName(d.getRestaurantName());
 		entity.setLocation(d.getLocation());
 		entity.setCuisine(d.getCuisine());
 		entity.setRatings(d.getRatings());

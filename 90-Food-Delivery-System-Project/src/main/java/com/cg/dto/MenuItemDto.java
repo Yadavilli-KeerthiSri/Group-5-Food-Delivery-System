@@ -1,13 +1,29 @@
 package com.cg.dto;
 
+import jakarta.validation.constraints.*;
+
 public class MenuItemDto {
 	private Long itemId;
+
+	@NotBlank(message = "{item.name.notblank}")
+	@Size(min = 2, max = 80, message = "{item.name.size}")
 	private String itemName;
+
+	@NotBlank(message = "{item.category.notblank}")
+	@Size(min = 2, max = 40, message = "{item.category.size}")
 	private String category;
+
+	@NotNull(message = "{item.price.notnull}")
+	@Positive(message = "{item.price.positive}")
+	@Digits(integer = 8, fraction = 2, message = "{item.price.digits}")
 	private Double price;
+
+	// Optional. If you require at least one image name, add @NotBlank
+	@Size(max = 1000, message = "{item.imageNames.size}")
 	private String imageNames;
 
-	// Reference to restaurant
+	@NotNull(message = "{item.restaurantId.notnull}")
+	@Positive(message = "{item.restaurantId.positive}")
 	private Long restaurantId;
 
 	public MenuItemDto() {

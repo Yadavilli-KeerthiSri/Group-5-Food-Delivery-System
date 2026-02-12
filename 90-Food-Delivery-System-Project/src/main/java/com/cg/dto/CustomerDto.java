@@ -1,12 +1,35 @@
 package com.cg.dto;
 
+import jakarta.validation.constraints.*;
+
 public class CustomerDto {
 	private Long customerId;
+
+	@NotBlank(message = "{customer.name.notblank}")
+	@Size(min = 2, max = 60, message = "{customer.name.size}")
+	@Pattern(regexp = "^[\\p{L} .'-]+$", message = "{customer.name.pattern}")
 	private String customerName;
+
+	@NotBlank(message = "{customer.contact.notblank}")
+	@Pattern(regexp = "^[0-9]{10}$", message = "{customer.contact.pattern}")
 	private String contact;
+
+	@NotBlank(message = "{customer.email.notblank}")
+	@Email(message = "{customer.email.email}")
+	@Size(max = 120, message = "{customer.email.size}")
 	private String email;
+
+	@NotBlank(message = "{customer.address.notblank}")
+	@Size(min = 5, max = 200, message = "{customer.address.size}")
 	private String address;
+
+	// For registration forms only; for profile update you may not expose this.
+	@NotBlank(message = "{customer.password.notblank}")
+	@Size(min = 8, max = 72, message = "{customer.password.size}") // BCrypt limit
 	private String password;
+
+	// Server-controlled—still validate shape if it arrives
+	@Pattern(regexp = "^ROLE_(USER|ADMIN)$", message = "{customer.role.pattern}")
 	private String role;
 
 	public CustomerDto() {

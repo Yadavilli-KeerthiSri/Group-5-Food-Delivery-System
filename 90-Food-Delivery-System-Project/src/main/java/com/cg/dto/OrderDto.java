@@ -1,7 +1,7 @@
 package com.cg.dto;
 
+import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
-
 import java.util.List;
 import java.util.Map;
 
@@ -10,34 +10,43 @@ import com.cg.enumeration.PaymentMethod;
 import com.cg.enumeration.TransactionStatus;
 
 public class OrderDto {
-
 	private Long orderId;
 
+	// Set by server, but safe to validate if present
 	private LocalDateTime orderDate;
 
-	private OrderStatus orderStatus;
+	// If clients can post this, enforce allowed names (or rely on enum binding)
+	@NotNull(message = "{order.status.notnull}")
+	private com.cg.enumeration.OrderStatus orderStatus;
 
+	@PositiveOrZero(message = "{order.totalAmount.positiveOrZero}")
 	private double totalAmount;
 
+	@NotNull(message = "{order.customerId.notnull}")
+	@Positive(message = "{order.customerId.positive}")
 	private Long customerId;
 
+	@Positive(message = "{order.deliveryAgentId.positive}")
 	private Long deliveryAgentId;
 
-	// items in this order (by IDs)
-	private List<Long> itemIds;
+	@NotNull(message = "{order.itemIds.notnull}")
+	@Size(min = 1, message = "{order.itemIds.size}")
+	private List<@NotNull @Positive Long> itemIds;
 
-	private Map<String, OrderItemDetail> itemDetails;
-
-	// payment ID if exists (1-1 relation)
+	@Positive(message = "{order.paymentId.positive}")
 	private Long paymentId;
 
+	@NotNull(message = "{order.paymentMethod.notnull}")
 	private PaymentMethod paymentMethod;
 
+	@NotNull(message = "{order.txStatus.notnull}")
 	private TransactionStatus transactionStatus;
 
-	private String deliveryAgentName; // add this
+	// Optional read-only cosmetics
+	private String deliveryAgentName;
+	private String deliveryAgentPhone;
 
-	private String deliveryAgentPhone; // optional
+	private Map<String, OrderItemDetail> itemDetails;
 
 	public OrderDto() {
 	}
@@ -157,7 +166,7 @@ public class OrderDto {
 	}
 
 	public Map<String, OrderItemDetail> getItemDetails() {
-		return itemDetails;
+		return getItemDetails();
 	}
 
 	public void setItemDetails(Map<String, OrderItemDetail> itemDetails) {

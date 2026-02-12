@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cg.dto.OrderDto;
+import com.cg.dto.OrderDto.OrderItemDetail;
 import com.cg.entity.DeliveryAgent;
 import com.cg.entity.Order;
 import com.cg.entity.Payment;
@@ -152,7 +153,7 @@ public class OrderService implements IOrderService {
 
 		// Build item details (name -> quantity/price/subtotal)
 		if (order.getItems() != null && !order.getItems().isEmpty()) {
-			Map<String, OrderDto.OrderItemDetail> itemDetailsMap = new LinkedHashMap<>();
+			Map<String, OrderItemDetail> itemDetails = new LinkedHashMap<>();
 			Map<String, Integer> itemQuantities = new HashMap<>();
 			Map<String, Double> itemPrices = new HashMap<>();
 
@@ -168,10 +169,10 @@ public class OrderService implements IOrderService {
 			itemQuantities.forEach((itemName, qty) -> {
 				double unitPrice = itemPrices.get(itemName);
 				double subtotal = qty * unitPrice;
-				itemDetailsMap.put(itemName, new OrderDto.OrderItemDetail(qty, unitPrice, subtotal));
+				itemDetails.put(itemName, new OrderItemDetail(qty, unitPrice, subtotal));
 			});
 
-			dto.setItemDetails(itemDetailsMap);
+			dto.setItemDetails(itemDetails);
 		}
 
 		return dto;
