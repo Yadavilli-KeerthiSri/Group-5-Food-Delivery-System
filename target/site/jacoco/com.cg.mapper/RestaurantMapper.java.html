@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestaurantMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">20-SpringBoot-Hello</a> &gt; <a href="index.source.html" class="el_package">com.cg.mapper</a> &gt; <span class="el_source">RestaurantMapper.java</span></div><h1>RestaurantMapper.java</h1><pre class="source lang-java linenums">package com.cg.mapper;
+
+import java.util.List;
+import java.util.function.Function;
+
+import com.cg.dto.RestaurantDto;
+import com.cg.entity.MenuItem;
+import com.cg.entity.Restaurant;
+
+public final class RestaurantMapper {
+
+	private RestaurantMapper() {
+	}
+
+	// ===== Read =====
+	public static RestaurantDto toDto(Restaurant e) {
+<span class="pc bpc" id="L17" title="1 of 2 branches missed.">		if (e == null)</span>
+<span class="nc" id="L18">			return null;</span>
+<span class="fc" id="L19">		RestaurantDto d = new RestaurantDto();</span>
+<span class="fc" id="L20">		d.setRestaurantId(e.getRestaurantId());</span>
+<span class="fc" id="L21">		d.setRestaurantName(e.getRestaurantName());</span>
+<span class="fc" id="L22">		d.setLocation(e.getLocation());</span>
+<span class="fc" id="L23">		d.setCuisine(e.getCuisine());</span>
+<span class="fc" id="L24">		d.setRatings(e.getRatings());</span>
+<span class="fc" id="L25">		d.setImageName(e.getImageName()); // &lt;-- IMPORTANT</span>
+		// if you have relation to menu items, map ids here.
+<span class="fc" id="L27">		return d;</span>
+	}
+
+	// ===== Create =====
+	public static Restaurant fromCreateDto(RestaurantDto d, Function&lt;List&lt;Long&gt;, List&lt;MenuItem&gt;&gt; loader) {
+<span class="nc bnc" id="L32" title="All 2 branches missed.">		if (d == null)</span>
+<span class="nc" id="L33">			return null;</span>
+<span class="nc" id="L34">		Restaurant entity = new Restaurant();</span>
+<span class="nc" id="L35">		entity.setLocation(d.getLocation());</span>
+<span class="nc" id="L36">		entity.setCuisine(d.getCuisine());</span>
+<span class="nc" id="L37">		entity.setRatings(d.getRatings());</span>
+<span class="nc" id="L38">		entity.setImageName(d.getImageName()); // &lt;-- IMPORTANT</span>
+		// if you have relation to menu items, load and set here.
+<span class="nc" id="L40">		return entity;</span>
+	}
+
+	// ===== Update =====
+	public static void applyUpdate(RestaurantDto d, Restaurant e, Function&lt;List&lt;Long&gt;, List&lt;MenuItem&gt;&gt; loader) {
+<span class="nc bnc" id="L45" title="All 4 branches missed.">		if (d == null || e == null)</span>
+<span class="nc" id="L46">			return;</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">		if (d.getRestaurantName() != null)</span>
+<span class="nc" id="L48">			e.setRestaurantName(d.getRestaurantName());</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">		if (d.getLocation() != null)</span>
+<span class="nc" id="L50">			e.setLocation(d.getLocation());</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">		if (d.getCuisine() != null)</span>
+<span class="nc" id="L52">			e.setCuisine(d.getCuisine());</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">		if (d.getRatings() != null)</span>
+<span class="nc" id="L54">			e.setRatings(d.getRatings());</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">		if (d.getImageName() != null)</span>
+<span class="nc" id="L56">			e.setImageName(d.getImageName()); // &lt;-- IMPORTANT</span>
+		// update menu items if needed
+<span class="nc" id="L58">	}</span>
+
+	// ===== Delete helper =====
+	public static Restaurant buildWithId(Long id) {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">		if (id == null)</span>
+<span class="nc" id="L63">			return null;</span>
+<span class="nc" id="L64">		Restaurant e = new Restaurant();</span>
+<span class="nc" id="L65">		e.setRestaurantId(id);</span>
+<span class="nc" id="L66">		return e;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

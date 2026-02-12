@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MenuItemMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">20-SpringBoot-Hello</a> &gt; <a href="index.source.html" class="el_package">com.cg.mapper</a> &gt; <span class="el_source">MenuItemMapper.java</span></div><h1>MenuItemMapper.java</h1><pre class="source lang-java linenums">package com.cg.mapper;
+
+import java.util.function.Function;
+
+import com.cg.dto.MenuItemDto;
+import com.cg.entity.MenuItem;
+import com.cg.entity.Restaurant;
+
+public final class MenuItemMapper {
+
+	private MenuItemMapper() {
+	}
+
+	// ===== Read =====
+	public static MenuItemDto toDto(MenuItem entity) {
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">		if (entity == null)</span>
+<span class="nc" id="L17">			return null;</span>
+<span class="fc" id="L18">		MenuItemDto dto = new MenuItemDto();</span>
+<span class="fc" id="L19">		dto.setItemId(entity.getItemId());</span>
+<span class="fc" id="L20">		dto.setItemName(entity.getItemName());</span>
+<span class="fc" id="L21">		dto.setCategory(entity.getCategory());</span>
+<span class="fc" id="L22">		dto.setPrice(entity.getPrice());</span>
+<span class="fc" id="L23">		dto.setImageNames(entity.getImageNames());</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">		dto.setRestaurantId(entity.getRestaurant() != null ? entity.getRestaurant().getRestaurantId() : null);</span>
+<span class="fc" id="L25">		return dto;</span>
+	}
+
+	// ===== Create =====
+	public static MenuItem fromCreateDto(MenuItemDto dto, Function&lt;Long, Restaurant&gt; restaurantResolver) {
+<span class="nc bnc" id="L30" title="All 2 branches missed.">		if (dto == null)</span>
+<span class="nc" id="L31">			return null;</span>
+<span class="nc" id="L32">		MenuItem entity = new MenuItem();</span>
+<span class="nc" id="L33">		entity.setItemId(dto.getItemId());</span>
+<span class="nc" id="L34">		entity.setItemName(dto.getItemName());</span>
+<span class="nc" id="L35">		entity.setCategory(dto.getCategory());</span>
+<span class="nc" id="L36">		entity.setPrice(dto.getPrice());</span>
+<span class="nc" id="L37">		entity.setImageNames(dto.getImageNames());</span>
+
+<span class="nc bnc" id="L39" title="All 4 branches missed.">		if (dto.getRestaurantId() != null &amp;&amp; restaurantResolver != null) {</span>
+<span class="nc" id="L40">			entity.setRestaurant(restaurantResolver.apply(dto.getRestaurantId()));</span>
+		}
+<span class="nc" id="L42">		return entity;</span>
+	}
+
+	// ===== Update =====
+	public static void applyUpdate(MenuItemDto dto, MenuItem target, Function&lt;Long, Restaurant&gt; restaurantResolver) {
+<span class="nc bnc" id="L47" title="All 4 branches missed.">		if (dto == null || target == null)</span>
+<span class="nc" id="L48">			return;</span>
+<span class="nc" id="L49">		target.setItemName(dto.getItemName());</span>
+<span class="nc" id="L50">		target.setCategory(dto.getCategory());</span>
+<span class="nc" id="L51">		target.setPrice(dto.getPrice());</span>
+<span class="nc" id="L52">		target.setImageNames(dto.getImageNames());</span>
+<span class="nc bnc" id="L53" title="All 4 branches missed.">		if (dto.getRestaurantId() != null &amp;&amp; restaurantResolver != null) {</span>
+<span class="nc" id="L54">			target.setRestaurant(restaurantResolver.apply(dto.getRestaurantId()));</span>
+		}
+<span class="nc" id="L56">	}</span>
+
+	// ===== Delete helper =====
+	public static MenuItem buildWithId(Long id) {
+<span class="nc bnc" id="L60" title="All 2 branches missed.">		if (id == null)</span>
+<span class="nc" id="L61">			return null;</span>
+<span class="nc" id="L62">		MenuItem e = new MenuItem();</span>
+<span class="nc" id="L63">		e.setItemId(id);</span>
+<span class="nc" id="L64">		return e;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

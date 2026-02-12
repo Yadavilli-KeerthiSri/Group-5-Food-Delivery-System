@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminRestaurantController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">20-SpringBoot-Hello</a> &gt; <a href="index.source.html" class="el_package">com.cg.controller.admin</a> &gt; <span class="el_source">AdminRestaurantController.java</span></div><h1>AdminRestaurantController.java</h1><pre class="source lang-java linenums">package com.cg.controller.admin;
+
+import com.cg.dto.RestaurantDto;
+import com.cg.iservice.IRestaurantService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping(&quot;/admin/restaurants&quot;)
+public class AdminRestaurantController {
+
+	private final IRestaurantService restaurantService;
+
+	@Autowired
+<span class="fc" id="L18">	public AdminRestaurantController(IRestaurantService restaurantService) {</span>
+<span class="fc" id="L19">		this.restaurantService = restaurantService;</span>
+<span class="fc" id="L20">	}</span>
+
+	/* ---------------------- LIST ---------------------- */
+	@GetMapping
+	public String list(Model model) {
+<span class="nc" id="L25">		model.addAttribute(&quot;restaurants&quot;, restaurantService.getAll());</span>
+<span class="nc" id="L26">		return &quot;admin/restaurants&quot;;</span>
+	}
+
+	/* ---------------------- ADD FORM ---------------------- */
+	@GetMapping(&quot;/add&quot;)
+	public String addForm(Model model) {
+<span class="nc" id="L32">		model.addAttribute(&quot;restaurant&quot;, new RestaurantDto());</span>
+<span class="nc" id="L33">		return &quot;admin/restaurant-form&quot;;</span>
+	}
+
+	/* ---------------------- EDIT FORM ---------------------- */
+	@GetMapping(&quot;/edit/{id}&quot;)
+	public String editForm(@PathVariable Long id, Model model) {
+<span class="nc" id="L39">		RestaurantDto restaurant = restaurantService.getById(id);</span>
+<span class="nc" id="L40">		model.addAttribute(&quot;restaurant&quot;, restaurant);</span>
+<span class="nc" id="L41">		return &quot;admin/restaurant-form&quot;;</span>
+	}
+
+	/* ---------------------- SAVE (ADD) ---------------------- */
+	// CREATE: Handles the initial save of a new restaurant
+	@PostMapping(&quot;/save&quot;)
+	public String create(@ModelAttribute(&quot;restaurant&quot;) RestaurantDto dto) {
+<span class="fc" id="L48">		restaurantService.add(dto);</span>
+<span class="fc" id="L49">		return &quot;redirect:/admin/restaurants&quot;;</span>
+	}
+
+	// UPDATE: Handles updates for existing restaurants
+	@PutMapping(&quot;/update/{id}&quot;)
+	public String update(@PathVariable Long id, @ModelAttribute(&quot;restaurant&quot;) RestaurantDto dto) {
+<span class="fc" id="L55">		dto.setRestaurantId(id);</span>
+<span class="fc" id="L56">		restaurantService.update(dto);</span>
+<span class="fc" id="L57">		return &quot;redirect:/admin/restaurants&quot;;</span>
+	}
+
+	/* ---------------------- DELETE ---------------------- */
+	@DeleteMapping(&quot;/delete/{id}&quot;)
+	public String delete(@PathVariable Long id) {
+<span class="nc" id="L63">		restaurantService.delete(id);</span>
+<span class="nc" id="L64">		return &quot;redirect:/admin/restaurants&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
