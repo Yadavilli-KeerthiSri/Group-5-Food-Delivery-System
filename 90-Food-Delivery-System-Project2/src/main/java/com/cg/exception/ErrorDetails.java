@@ -6,7 +6,7 @@ public class ErrorDetails {
 	private String message;
 	private Date timeStamp;
 	private String detail;
-	
+
 	public ErrorDetails() {
 		super();
 	}

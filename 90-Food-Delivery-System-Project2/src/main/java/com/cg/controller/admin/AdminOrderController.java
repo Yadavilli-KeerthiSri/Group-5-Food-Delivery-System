@@ -15,21 +15,21 @@ import java.util.List;
 @RequestMapping("/admin/orders")
 public class AdminOrderController {
 
-    @Autowired
-    private OrderService orderService; // Assuming service returns OrderDTO
+	@Autowired
+	private OrderService orderService; // Assuming service returns OrderDTO
 
-    @Autowired
-    private CustomerService customerService; // Assuming service returns CustomerDTO
+	@Autowired
+	private CustomerService customerService; // Assuming service returns CustomerDTO
 
-    /* LIST ALL ORDERS */
-    @GetMapping
-    public String list(Model model) {
-        List<OrderDto> orders = orderService.getAll(); 
-        model.addAttribute("orders", orders);
-        return "admin/order";
-    }
+	/* LIST ALL ORDERS */
+	@GetMapping
+	public String list(Model model) {
+		List<OrderDto> orders = orderService.getAll();
+		model.addAttribute("orders", orders);
+		return "admin/order";
+	}
 
-    /* VIEW SPECIFIC ORDER + CUSTOMER DETAILS */
+	/* VIEW SPECIFIC ORDER + CUSTOMER DETAILS */
 //    @GetMapping("/view/{id}")
 //    public String viewDetails(@PathVariable Long id, Model model) {
 //        // 1. Fetch the DTO
@@ -44,24 +44,22 @@ public class AdminOrderController {
 //        
 //        return "admin/order"; 
 //    }
-    
-    /* VIEW SPECIFIC ORDER + CUSTOMER DETAILS */
-    @GetMapping("/view/{id}")
-    public String viewDetails(@PathVariable Long id, Model model) {
-        // ... (existing logic) ...
-        return "admin/order"; 
-    }
 
+	/* VIEW SPECIFIC ORDER + CUSTOMER DETAILS */
+	@GetMapping("/view/{id}")
+	public String viewDetails(@PathVariable Long id, Model model) {
+		return "admin/order";
+	}
 
-    /* UPDATE STATUS */
-    @PostMapping("/update/{id}")
-    public String updateStatus(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            orderService.updateStatus(id);
-            redirectAttributes.addFlashAttribute("success", "Status updated successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to update: " + e.getMessage());
-        }
-        return "redirect:/admin/orders";
-    }
+	/* UPDATE STATUS */
+	@PutMapping("/update/{id}")
+	public String updateStatus(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+		try {
+			orderService.updateStatus(id);
+			redirectAttributes.addFlashAttribute("success", "Status updated successfully!");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Failed to update: " + e.getMessage());
+		}
+		return "redirect:/admin/orders";
+	}
 }
