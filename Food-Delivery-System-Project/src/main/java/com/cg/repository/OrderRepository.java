@@ -1,0 +1,49 @@
+package com.cg.repository;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cg.entity.DeliveryAgent;
+import com.cg.entity.Order;
+import com.cg.enumeration.OrderStatus;
+
+@Repository
+public interface OrderRepository extends JpaRepository<Order, Long> {
+	List<Order> findByCustomerCustomerId(Long customerId);
+
+	List<Order> findByOrderStatus(OrderStatus status);
+
+	List<Order> findAllByCustomer_EmailOrderByOrderDateDesc(String email);
+
+	List<Order> findByOrderStatusNotIn(List<OrderStatus> statuses);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE Order o SET o.orderStatus = :status WHERE o.orderId = :id")
+	void updateStatusOnly(@Param("id") Long id, @Param("status") OrderStatus status);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE Order o SET o.orderStatus = :status, o.deliveryAgent = :agent WHERE o.orderId = :id")
+	void updateStatusAndAgent(@Param("id") Long id, @Param("status") OrderStatus status,
+			@Param("agent") DeliveryAgent agent);
+
+	@Query("""
+			    select o from Order o
+			    left join fetch o.payment p
+			    left join fetch o.deliveryAgent da
+			    where o.orderId = :id
+			""")
+	Optional<Order> findByIdWithPaymentAndAgent(@Param("id") Long id);
+
+	boolean existsByItems_ItemId(Long itemId); // Order -> items -> itemId
+
+	boolean existsByItems_Restaurant_RestaurantId(Long restaurantId);
+}
