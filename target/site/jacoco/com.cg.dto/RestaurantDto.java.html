@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestaurantDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">20-SpringBoot-Hello</a> &gt; <a href="index.source.html" class="el_package">com.cg.dto</a> &gt; <span class="el_source">RestaurantDto.java</span></div><h1>RestaurantDto.java</h1><pre class="source lang-java linenums">package com.cg.dto;
+
+import java.util.List;
+
+public class RestaurantDto {
+	private Long restaurantId;
+	private String restaurantName;
+	private String location;
+	private String cuisine;
+	private Double ratings;
+	private String imageName;
+
+	// Menu item IDs for this restaurant
+	private List&lt;Long&gt; menuItemIds;
+
+<span class="fc" id="L16">	public RestaurantDto() {</span>
+<span class="fc" id="L17">	}</span>
+
+	public RestaurantDto(Long restaurantId, String restaurantName, String location, String cuisine, Double ratings,
+<span class="nc" id="L20">			List&lt;Long&gt; menuItemIds, String imageName) {</span>
+<span class="nc" id="L21">		this.restaurantId = restaurantId;</span>
+<span class="nc" id="L22">		this.restaurantName = restaurantName;</span>
+<span class="nc" id="L23">		this.location = location;</span>
+<span class="nc" id="L24">		this.cuisine = cuisine;</span>
+<span class="nc" id="L25">		this.ratings = ratings;</span>
+<span class="nc" id="L26">		this.menuItemIds = menuItemIds;</span>
+<span class="nc" id="L27">		this.imageName = imageName;</span>
+<span class="nc" id="L28">	}</span>
+
+	public Long getRestaurantId() {
+<span class="fc" id="L31">		return restaurantId;</span>
+	}
+
+	public void setRestaurantId(Long restaurantId) {
+<span class="fc" id="L35">		this.restaurantId = restaurantId;</span>
+<span class="fc" id="L36">	}</span>
+
+	public String getRestaurantName() {
+<span class="fc" id="L39">		return restaurantName;</span>
+	}
+
+	public void setRestaurantName(String restaurantName) {
+<span class="fc" id="L43">		this.restaurantName = restaurantName;</span>
+<span class="fc" id="L44">	}</span>
+
+	public String getLocation() {
+<span class="nc" id="L47">		return location;</span>
+	}
+
+	public void setLocation(String location) {
+<span class="fc" id="L51">		this.location = location;</span>
+<span class="fc" id="L52">	}</span>
+
+	public String getCuisine() {
+<span class="nc" id="L55">		return cuisine;</span>
+	}
+
+	public void setCuisine(String cuisine) {
+<span class="fc" id="L59">		this.cuisine = cuisine;</span>
+<span class="fc" id="L60">	}</span>
+
+	public Double getRatings() {
+<span class="nc" id="L63">		return ratings;</span>
+	}
+
+	public void setRatings(Double ratings) {
+<span class="fc" id="L67">		this.ratings = ratings;</span>
+<span class="fc" id="L68">	}</span>
+
+	public List&lt;Long&gt; getMenuItemIds() {
+<span class="nc" id="L71">		return menuItemIds;</span>
+	}
+
+	public void setMenuItemIds(List&lt;Long&gt; menuItemIds) {
+<span class="nc" id="L75">		this.menuItemIds = menuItemIds;</span>
+<span class="nc" id="L76">	}</span>
+
+	public String getImageName() {
+<span class="nc" id="L79">		return imageName;</span>
+	}
+
+	public void setImageName(String imageName) {
+<span class="fc" id="L83">		this.imageName = imageName;</span>
+<span class="fc" id="L84">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

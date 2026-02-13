@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminOrderController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">20-SpringBoot-Hello</a> &gt; <a href="index.source.html" class="el_package">com.cg.controller.admin</a> &gt; <span class="el_source">AdminOrderController.java</span></div><h1>AdminOrderController.java</h1><pre class="source lang-java linenums">package com.cg.controller.admin;
+
+import com.cg.dto.OrderDto;
+import com.cg.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+
+@Controller
+@RequestMapping(&quot;/admin/orders&quot;)
+<span class="fc" id="L15">public class AdminOrderController {</span>
+
+	@Autowired
+	private OrderService orderService; // Assuming service returns OrderDTO
+
+	/* LIST ALL ORDERS */
+	@GetMapping
+	public String list(Model model) {
+<span class="fc" id="L23">		List&lt;OrderDto&gt; orders = orderService.getAll();</span>
+<span class="fc" id="L24">		model.addAttribute(&quot;orders&quot;, orders);</span>
+<span class="fc" id="L25">		return &quot;admin/order&quot;;</span>
+	}
+
+	/* VIEW SPECIFIC ORDER + CUSTOMER DETAILS */
+	@GetMapping(&quot;/view/{id}&quot;)
+	public String viewDetails(@PathVariable Long id, Model model) {
+<span class="fc" id="L31">		return &quot;admin/order&quot;;</span>
+	}
+
+	/* UPDATE STATUS */
+	@PutMapping(&quot;/update/{id}&quot;)
+	public String updateStatus(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+		try {
+<span class="fc" id="L38">			orderService.updateStatus(id);</span>
+<span class="fc" id="L39">			redirectAttributes.addFlashAttribute(&quot;success&quot;, &quot;Status updated successfully!&quot;);</span>
+<span class="fc" id="L40">		} catch (Exception e) {</span>
+<span class="fc" id="L41">			redirectAttributes.addFlashAttribute(&quot;error&quot;, &quot;Failed to update: &quot; + e.getMessage());</span>
+<span class="fc" id="L42">		}</span>
+<span class="fc" id="L43">		return &quot;redirect:/admin/orders&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

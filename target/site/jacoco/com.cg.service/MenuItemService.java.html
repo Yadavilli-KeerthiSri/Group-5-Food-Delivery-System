@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MenuItemService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">20-SpringBoot-Hello</a> &gt; <a href="index.source.html" class="el_package">com.cg.service</a> &gt; <span class="el_source">MenuItemService.java</span></div><h1>MenuItemService.java</h1><pre class="source lang-java linenums">package com.cg.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cg.dto.MenuItemDto;
+import com.cg.entity.MenuItem;
+import com.cg.mapper.MenuItemMapper;
+import com.cg.repository.MenuItemRepository;
+import com.cg.repository.OrderRepository;
+import com.cg.repository.RestaurantRepository;
+import com.cg.iservice.IMenuItemService;
+
+@Service
+<span class="fc" id="L19">public class MenuItemService implements IMenuItemService {</span>
+
+	@Autowired
+	private MenuItemRepository menuItemRepository;
+
+	@Autowired
+	private RestaurantRepository restaurantRepository;
+
+	@Autowired
+	private OrderRepository orderRepository;
+
+	@Override
+	public MenuItemDto add(MenuItemDto dto) {
+<span class="nc" id="L32">		MenuItem entity = MenuItemMapper.fromCreateDto(dto,</span>
+<span class="nc" id="L33">				restId -&gt; restaurantRepository.findById(restId).orElse(null));</span>
+<span class="nc" id="L34">		MenuItem saved = menuItemRepository.save(entity);</span>
+<span class="nc" id="L35">		return MenuItemMapper.toDto(saved);</span>
+	}
+
+	@Override
+	public MenuItemDto update(MenuItemDto dto) {
+<span class="nc" id="L40">		MenuItem existing = menuItemRepository.findById(dto.getItemId()).orElseThrow();</span>
+<span class="nc" id="L41">		MenuItemMapper.applyUpdate(dto, existing, restId -&gt; restaurantRepository.findById(restId).orElse(null));</span>
+<span class="nc" id="L42">		MenuItem saved = menuItemRepository.save(existing);</span>
+<span class="nc" id="L43">		return MenuItemMapper.toDto(saved);</span>
+	}
+
+	@Override
+	public MenuItemDto getById(Long id) {
+<span class="fc" id="L48">		return menuItemRepository.findById(id).map(MenuItemMapper::toDto).orElseThrow();</span>
+	}
+
+	@Override
+	public List&lt;MenuItemDto&gt; getByRestaurant(Long restaurantId) {
+<span class="nc" id="L53">		return menuItemRepository.findByRestaurantRestaurantId(restaurantId).stream().map(MenuItemMapper::toDto)</span>
+<span class="nc" id="L54">				.collect(Collectors.toList());</span>
+	}
+
+	@Override
+	@Transactional
+	public void delete(Long id) {
+<span class="fc bfc" id="L60" title="All 2 branches covered.">		if (orderRepository.existsByItems_ItemId(id)) {</span>
+<span class="fc" id="L61">			throw new IllegalStateException(&quot;Cannot delete: item is used in existing orders.&quot;);</span>
+		}
+<span class="fc" id="L63">		menuItemRepository.deleteById(id);</span>
+<span class="fc" id="L64">	}</span>
+
+	@Override
+	public List&lt;MenuItemDto&gt; getAll() {
+<span class="nc" id="L68">		return menuItemRepository.findAll().stream().map(MenuItemMapper::toDto).collect(Collectors.toList());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

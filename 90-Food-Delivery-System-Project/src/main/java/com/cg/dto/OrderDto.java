@@ -166,7 +166,7 @@ public class OrderDto {
 	}
 
 	public Map<String, OrderItemDetail> getItemDetails() {
-		return getItemDetails();
+		return itemDetails;
 	}
 
 	public void setItemDetails(Map<String, OrderItemDetail> itemDetails) {
